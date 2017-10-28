@@ -1,11 +1,14 @@
 # Message-in-a-Bottle
 
-The fundamental challenge of statistical learning is to represent the information from one variable that is relevant to the prediction of another.  Algorithms must navigate a trade off between compressing the representation of input features and preserving the meaningful information for prediction of the output responses.  Naftali Tishby et al. describe this process as squeezing ``the information that X provides about Y through a bottleneck" (cite Tishby, Bialek 1999). They formalize this process using an information theoretic approach, which they termed the the Information Bottleneck Method (cite Tishby and Polani 2006).    
+The fundamental challenge of statistical learning is to represent the information from one variable that is relevant to the prediction of another.  Algorithms must navigate a trade off between compressing the representation of input features and preserving the meaningful information for prediction of the output responses.  Naftali Tishby et al. describe this process as squeezing "the information that X provides about Y through a bottleneck" (cite Tishby, Bialek 1999). They formalize this process using an information theoretic approach, which they termed the the Information Bottleneck Method (cite Tishby and Polani 2006).    
 
-Shannon's Information Theory and its close cousin, the Information Bottleneck Method, have provided a new perspective on the recent successes of Deep Learning.  Specifically, they have provided insight on the value of depth in neural networks and the use of the ``information plane" as a powerful tool for understanding learning dynamics.
+Shannon's Information Theory and its close cousin, the Information Bottleneck Method, have provided a new perspective on the recent successes of Deep Learning.  Specifically, they have provided insight on the value of depth in neural networks and the use of the "information plane" as a powerful tool for understanding learning dynamics.
 
+<p align="center">
 ![Information Plane](img/information_plane.png)
+
 *Plot of layers from a neural network in the information plane during training.*
+</p>
 
 For our final project in CS229 we propose a multifaceted study of the information plane as a powerful tool for visualizing learning, finding the limits of model generalization and designing information performance driven cost functions. Our proposal is best classified as an algorithm development project in the Theory \& Reinforcement Learning category.  Our project will consist of the following three stages:
 
