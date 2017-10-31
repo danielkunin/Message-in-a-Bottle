@@ -6,8 +6,7 @@ Shannon's Information Theory and its close cousin, the Information Bottleneck Me
 
 <p align="center">
 ![Information Plane](img/information_plane.png)
-
-*Plot of layers from a neural network in the information plane during training.*
+<p>*Plot of layers from a neural network in the information plane during training.*</p>
 </p>
 
 For our final project in CS229 we propose a multifaceted study of the information plane as a powerful tool for visualizing learning, finding the limits of model generalization and designing information performance driven cost functions. Our proposal is best classified as an algorithm development project in the Theory \& Reinforcement Learning category.  Our project will consist of the following three stages:
