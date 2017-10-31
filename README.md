@@ -5,8 +5,8 @@ The fundamental challenge of statistical learning is to represent the informatio
 Shannon's Information Theory and its close cousin, the Information Bottleneck Method, have provided a new perspective on the recent successes of Deep Learning.  Specifically, they have provided insight on the value of depth in neural networks and the use of the "information plane" as a powerful tool for understanding learning dynamics.
 
 <p align="center">
-![Information Plane](img/information_plane.png)
-<p>*Plot of layers from a neural network in the information plane during training.*</p>
+    <img src="img/information_plane.png">
+    <p><i>Plot of layers from a neural network in the information plane during training.</i></p>
 </p>
 
 For our final project in CS229 we propose a multifaceted study of the information plane as a powerful tool for visualizing learning, finding the limits of model generalization and designing information performance driven cost functions. Our proposal is best classified as an algorithm development project in the Theory \& Reinforcement Learning category.  Our project will consist of the following three stages:
