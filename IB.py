@@ -330,7 +330,7 @@ class dataset:
         
         # calc and display I(x,y)
         self.process_pxy(drop_zeros=drop_zeros)
-        print("I(X;Y) = %.3f" % self.ixy)
+        print("Bin Estimated I(X;Y) = %.3f" % self.ixy)
         
     def plot_coord(self,save=False,path=None):
         if self.coord is not None:

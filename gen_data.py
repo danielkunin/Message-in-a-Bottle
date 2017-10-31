@@ -27,7 +27,6 @@ def sample_gaussian(param, dim):
 
 
 
-
 # Computes mesh from multivariate gaussian conditionals
 # Input:
 #  	* param = array of paramters for each conditional distribution
@@ -56,6 +55,27 @@ def mesh_gaussian(param, dim, mins, maxs, num):
 
 
 
+# Computes mutual infromation I(X;Y) of multivariate gaussians
+def mi_gaussian(param, cond):
+	m = 0
+	mi = 0
+	joint = np.zeros(cond[0].shape)
+	for p,c in zip(param,cond):
+		# true H(X|Y) from definition normal 
+		rv = mvn(p['mu'],p['cov'])
+		Hx = rv.entropy()
+		print("True H(X|%s) = %.3f" % (p['y'], Hx))
+		# estimated H(X|Y) from mesh of p(X|Y)
+		HatHx = np.sum(-c * np.log2(c))
+		print("Mesh Estimated H(X|%s) = %.3f" % (p['y'], HatHx))
+		# update terms
+		m += p['n']
+		mi -= Hx
+		joint += p['n'] * c
+	joint /= m
+	mi += np.sum(-joint * np.log2(joint)) # What is formula for H(X) from \sum_Y P(X|Y)P(Y) 
+	print("Mesh Estimated I(X;Y) = %.3f" % mi)
+	
 
 # Plot data
 # Input:
@@ -90,12 +110,15 @@ def simple_test():
              {'mu': mu2, 'cov': sig2, 'n': n2, 'y': 1}]
     # sample & mesh
     data = sample_gaussian(param, 2)
-    pos, cond = mesh_gaussian(param, 2, [-2,-2], [12,12], 100)
+    pos, cond = mesh_gaussian(param, 2, [-2,-2], [12,12], 1000)
     # plot 2D data
     plot_2d(data, pos, cond)
+    # calculate mutual information
+    mi_gaussian(param, cond)
     # create IB object
     ds = dataset(coord = data[:,:-1], labels = data[:,-1])
-    ds.s = 1.
+    ds.s = 2.
     ds.smoothing_type = "uniform"
     ds.coord_to_pxy()
     ds.plot_pxy()
+simple_test()
