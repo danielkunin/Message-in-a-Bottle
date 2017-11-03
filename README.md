@@ -6,7 +6,7 @@ Shannon's Information Theory and its close cousin, the Information Bottleneck Me
 
 <p align="center">
     <img src="img/information_plane.png">
-    <p><i>Plot of layers from a neural network in the information plane during training.</i></p>
+    <p align="center"><i>Plot of layers from a neural network in the information plane during training.</i></p>
 </p>
 
 For our final project in CS229 we propose a multifaceted study of the information plane as a powerful tool for visualizing learning, finding the limits of model generalization and designing information performance driven cost functions. Our proposal is best classified as an algorithm development project in the Theory \& Reinforcement Learning category.  Our project will consist of the following three stages:
@@ -29,3 +29,11 @@ For our final project in CS229 we propose a multifaceted study of the informatio
 
 
 Statistical learning at its core can be understood as a constrained compression problem.  We hope to use the theoretical framework and visual language proposed by Naftali Tishby to investigate current machine learning methods and develop techniques and measures for new ones.
+
+## File Structure
+
++ test.py - Main file that calls other functionality and generates plots
++ generate_data.py - Generate data from different distributions
++ info_measures.py - Estimates measures of information
++ ml_algorithms.py - Implements different learning algorithms
+
