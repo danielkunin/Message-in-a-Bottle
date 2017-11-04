@@ -1,9 +1,10 @@
 import numpy as np
+from scipy import stats
 from scipy.stats import multivariate_normal as mvn
 
 
 # Computes mutual infromation I(X;Y) of multivariate gaussians
-def mi_gaussian(param, cond):
+def TRUTH(param, cond):
 	m = 0
 	mi = 0
 	joint = np.zeros(cond[0].shape)
@@ -30,6 +31,24 @@ def mi_gaussian(param, cond):
 # Edgeworth Expansion Method (EDGE)
 
 # Kernel Density Estimator Method (KDE)
+def KDE(data):
+	# Setup
+	X = data[:,0:-1]
+	Y = data[:,-1]
+	n,d = X.shape
+	# H(X)
+	kernel = stats.gaussian_kde(X.T)
+	Hx = -kernel.logpdf(X.T).sum()
+	MI = Hx
+	# H(X|Y)
+	for y in np.unique(Y):
+		kernel = stats.gaussian_kde(X[Y == y].T)
+		Hx_y = -kernel.logpdf(X[Y == y].T).sum()
+		MI -= Hx_y
+	# I(X;Y)
+	MI /= n
+	return MI
+
 
 # K-Nearest Neighbor Method (KNN)
 

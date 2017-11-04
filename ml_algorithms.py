@@ -9,7 +9,6 @@ class LOGISTIC:
 
 # Linear Discriminant Analysis
 class LDA:
-
     def __init__():
 
 

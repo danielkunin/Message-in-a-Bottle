@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from generate_data import *
 from info_measures import *
-from ml_algorithms import *
+# from ml_algorithms import *
 from IB import *
 
 
@@ -19,28 +19,42 @@ def plot_2d(data, pos, cond):
 	plt.title('Data')
 	plt.draw()
 
+# plots each row of imput as line
+def plot_lines(x,y,title):
+    fig, ax = plt.subplots()
+    plt.plot(x.T,y.T,'r-')
+    ax.grid(True)
+    plt.xlabel('Sample Size')
+    plt.ylabel('Error')
+    plt.title(title)
+    plt.show()
 
-
-# generates two gaussian datasets
-def simple_test():
-	# define y1   
-    n1 = 30
+# plots first two dim dataset (data) and contour lines (pos, cond)
+def simple_paramters(n1, n2):
+    # define y1   
     mu1 = np.array([0,0])
     sig1 = np.eye(2)
     # define y2
-    n2 = 30
     mu2 = np.array([3,5])
     sig2 = np.array([[3,2],[2,10]])
     # set parameters   
     param = [{'mu': mu1, 'cov': sig1, 'n': n1, 'y': 0},
              {'mu': mu2, 'cov': sig2, 'n': n2, 'y': 1}]
+    return param
+
+
+# generates two gaussian datasets
+def simple_test():
+    # setup
+    param = simple_paramters(30,30)
     # sample & mesh
     data = sample_gaussian(param, 2)
     pos, cond = mesh_gaussian(param, 2, [-2,-2], [12,12], 1000)
     # plot 2D data
     plot_2d(data, pos, cond)
     # calculate mutual information
-    mi_gaussian(param, cond)
+    TRUTH(param, cond)
+    KDE(data)
     # create IB object
     ds = dataset(coord = data[:,:-1], labels = data[:,-1])
     ds.s = 2.
@@ -49,9 +63,31 @@ def simple_test():
     ds.plot_pxy()
 
 
+# tests consitency of mutual information estimates
+def consitency():
+    # setup
+    n,step,m = 1000,10,10
+    param = simple_paramters(n,n)
+    size = np.arange(step,n+step,step)
+    kde = np.zeros((m,int(n/step)))
+    for i in range(m):
+        # sample
+        data = sample_gaussian(param, 2)
+        Y = data[:,-1]
+        X_y0 = data[Y == 0]
+        X_y1 = data[Y == 1]
+        # calculate mutual information
+        for j in size:
+            d = np.vstack([X_y0[0:j,:], X_y1[0:j,:]])
+            kde[i,int((j-step)/step)] = KDE(d)
+    # plot 2D data
+    plot_lines(np.tile(size,(m, 1)),kde,'KDE I(X;Y) Estimator')
+
+
 # main function of tests to run
 def main():
-	simple_test()
+    simple_test()
+    consitency()
 
 if __name__ == '__main__':
     main()
