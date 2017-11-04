@@ -4,6 +4,7 @@ from scipy.stats import multivariate_normal as mvn
 
 
 # Computes mutual infromation I(X;Y) of multivariate gaussians
+# THIS FUNCTION IS NOT CORRECT YET....
 def TRUTH(param, cond):
 	m = 0
 	mi = 0
@@ -25,6 +26,21 @@ def TRUTH(param, cond):
 	print("Mesh Estimated I(X;Y) = %.3f" % mi)
 
 
+# Computes MI from eprical discrete joint distribution
+def DISCRETE(X, Y):
+	# Setup
+	n = len(X)
+	# Compute Empirical Distributions
+	valX, countX = np.unique(X, return_counts=True)
+	valY, countY = np.unique(Y, return_counts=True)
+	valXY, countXY = np.unique(zip(X,Y), return_counts=True)
+	# Compute Entropy
+	Hx = np.sum(-countX/n * np.log2(countX/n))
+	Hy = np.sum(-countY/n * np.log2(countY/n))
+	Hxy = np.sum(-countXY/n * np.log2(countXY/n))
+	# Compute Mutual Information
+	MI = Hx + Hy - Hxy
+	return MI
 
 # DJ Strouse Partiotion Method (BIN)
 
@@ -45,8 +61,8 @@ def KDE(data):
 		kernel = stats.gaussian_kde(X[Y == y].T)
 		Hx_y = -kernel.logpdf(X[Y == y].T).sum()
 		MI -= Hx_y
-	# I(X;Y)
-	MI /= n
+	# Normalize and Convert Base 2
+	MI /= (n * np.log(2))
 	return MI
 
 

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from generate_data import *
 from info_measures import *
-# from ml_algorithms import *
+from ml_algorithms import *
 from IB import *
 
 
@@ -46,7 +46,8 @@ def simple_paramters(n1, n2):
 # generates two gaussian datasets
 def simple_test():
     # setup
-    param = simple_paramters(30,30)
+    n = 300
+    param = simple_paramters(n,n)
     # sample & mesh
     data = sample_gaussian(param, 2)
     pos, cond = mesh_gaussian(param, 2, [-2,-2], [12,12], 1000)
@@ -83,11 +84,27 @@ def consitency():
     # plot 2D data
     plot_lines(np.tile(size,(m, 1)),kde,'KDE I(X;Y) Estimator')
 
+# generates two gaussian datasets
+def perceptron_test():
+    # setup
+    n = 300
+    param = simple_paramters(n,n)
+    # sample
+    data = sample_gaussian(param, 2)
+    # Perceptron
+    perceptron = PERCEPTRON()
+    # Train and Plot
+    l_rate = 0.01
+    n_epoch = 1000
+    Ixx, Ixy = perceptron.info_train(data, l_rate, n_epoch)
+    perceptron.plot_IPlane(Ixx,Ixy,np.arange(1,n_epoch+1))
+
 
 # main function of tests to run
 def main():
-    simple_test()
-    consitency()
+    # simple_test()
+    # consitency()
+    perceptron_test()
 
 if __name__ == '__main__':
     main()

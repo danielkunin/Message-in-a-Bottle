@@ -1,27 +1,104 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from info_measures import *
+
+# Perceptron (https://machinelearningmastery.com/implement-perceptron-algorithm-scratch-python/)
+class PERCEPTRON:
+
+    def __init__(self):
+        pass
+
+    # Make a prediction with weights
+    def predict(self, row, weights):
+        activation = weights[0]
+        for i in range(len(row)-1):
+            activation += weights[i + 1] * row[i]
+        return 1.0 if activation >= 0.0 else 0.0
+     
+    # Estimate Perceptron weights using stochastic gradient descent
+    def train_weights(self, train, l_rate, n_epoch):
+        weights = [0.0 for i in range(len(train[0]))]
+        for epoch in range(n_epoch):
+            for row in train:
+                prediction = predict(row, weights)
+                error = row[-1] - prediction
+                weights[0] = weights[0] + l_rate * error
+                for i in range(len(row)-1):
+                    weights[i + 1] = weights[i + 1] + l_rate * error * row[i]
+        return weights
+     
+    # Estimate Perceptron weights and record mutual information  
+    def info_train(self, train, l_rate, n_epoch):
+        weights = [0.0 for i in range(len(train[0]))]
+        Ixx = np.zeros(n_epoch)
+        Ixy = np.zeros(n_epoch)
+        for epoch in range(n_epoch):
+            # Calculate Mutual Information
+            predictions = list()
+            for row in train:
+                prediction = self.predict(row, weights)
+                predictions.append(prediction)
+            data = np.zeros(train.shape)
+            data[:,0:-1] = train[:,0:-1]
+            data[:,-1] = predictions
+            Ixx[epoch] = KDE(data)
+            Ixy[epoch] = DISCRETE(predictions, train[:,-1])
+            # Batch Gradient Descent
+            for row in train:
+                prediction = self.predict(row, weights)
+                error = row[-1] - prediction
+                weights[0] = weights[0] + l_rate * error
+                for i in range(len(row)-1):
+                    weights[i + 1] = weights[i + 1] + l_rate * error * row[i]
+        return Ixx, Ixy
+
+    # Perceptron Algorithm With Stochastic Gradient Descent
+    def perceptron(self, train, test, l_rate, n_epoch):
+        predictions = list()
+        weights = train_weights(train, l_rate, n_epoch)
+        for row in test:
+            prediction = predict(row, weights)
+            predictions.append(prediction)
+        return predictions
+
+    # Plot to Information Plane
+    def plot_IPlane(self,x,y,n):
+        fig, ax = plt.subplots()
+        plt.scatter(x,y,c=n,s=20)
+        plt.colorbar()
+        ax.grid(True)
+        plt.xlabel('I(X;X~)')
+        plt.ylabel('I(X~;Y)')
+        plt.title("Perceptron in the Information Plane")
+        plt.show()
 
 
 # Logistic Regression
 class LOGISTIC:
 
-    def __init__():
+    def __init__(self):
+        pass
 
 
 # Linear Discriminant Analysis
 class LDA:
-    def __init__():
+
+    def __init__(self):
+        pass
 
 
 # Quadratic Discriminant Analysis
 class QDA:
 
-    def __init__():
+    def __init__(self):
+        pass
 
 
 # Multinomial Naive Bayes
 class BAYES:
 
-    def __init__():
+    def __init__(self):
+        pass
 
     def readMatrix(file):
         fd = open(file, 'r')
@@ -82,7 +159,7 @@ class BAYES:
 # Support Vector Machine
 class SVM:
     
-    def __init__():
+    def __init__(self):
         np.random.seed(123)
         tau = 8.
 
@@ -151,5 +228,5 @@ class SVM:
 
     def evaluate(output, label):
         error = (output != label).sum() * 1. / len(output)
-        print 'Error: %1.4f' % error
+        print('Error: %1.4f' % error)
 
