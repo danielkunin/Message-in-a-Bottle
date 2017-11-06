@@ -30,7 +30,7 @@ def plot_lines(x,y,title):
     plt.show()
 
 # plots first two dim dataset (data) and contour lines (pos, cond)
-def simple_paramters(n1, n2):
+def simple_paramters(n1, n2, y1, y2):
     # define y1   
     mu1 = np.array([0,0])
     sig1 = np.eye(2)
@@ -38,8 +38,8 @@ def simple_paramters(n1, n2):
     mu2 = np.array([3,5])
     sig2 = np.array([[3,2],[2,10]])
     # set parameters   
-    param = [{'mu': mu1, 'cov': sig1, 'n': n1, 'y': 0},
-             {'mu': mu2, 'cov': sig2, 'n': n2, 'y': 1}]
+    param = [{'mu': mu1, 'cov': sig1, 'n': n1, 'y': y1},
+             {'mu': mu2, 'cov': sig2, 'n': n2, 'y': y2}]
     return param
 
 
@@ -47,7 +47,7 @@ def simple_paramters(n1, n2):
 def simple_test():
     # setup
     n = 300
-    param = simple_paramters(n,n)
+    param = simple_paramters(n,n,0,1)
     # sample & mesh
     data = sample_gaussian(param, 2)
     pos, cond = mesh_gaussian(param, 2, [-2,-2], [12,12], 1000)
@@ -68,7 +68,7 @@ def simple_test():
 def consitency():
     # setup
     n,step,m = 1000,10,10
-    param = simple_paramters(n,n)
+    param = simple_paramters(n,n,0,1)
     size = np.arange(step,n+step,step)
     kde = np.zeros((m,int(n/step)))
     for i in range(m):
@@ -84,11 +84,11 @@ def consitency():
     # plot 2D data
     plot_lines(np.tile(size,(m, 1)),kde,'KDE I(X;Y) Estimator')
 
-# generates two gaussian datasets
+# Perceptron
 def perceptron_test():
     # setup
     n = 300
-    param = simple_paramters(n,n)
+    param = simple_paramters(n,n,0,1)
     # sample
     data = sample_gaussian(param, 2)
     # Perceptron
@@ -97,14 +97,63 @@ def perceptron_test():
     l_rate = 0.01
     n_epoch = 1000
     Ixx, Ixy, error = perceptron.info_train(data, l_rate, n_epoch)
-    perceptron.plot_IPlane(Ixx,Ixy,error)#np.arange(1,n_epoch+1))
+    perceptron.plot_IPlane(Ixx,Ixy,np.arange(1,n_epoch+1),error)
+
+# Logistic Regression
+def logistic_test():
+    # setup
+    n = 300
+    param = simple_paramters(n,n,-1,1)
+    # sample
+    data = sample_gaussian(param, 2)
+    # Perceptron
+    logistic = LOGISTIC()
+    # Train and Plot
+    max_iter = 1000
+    alpha = 0.00001
+    X = np.concatenate((np.ones((data.shape[0],1)), data[:,0:-1]), axis=1)
+    Ixx, Ixy, error = logistic.info_train(X, data[:,-1], max_iter, alpha)
+    logistic.plot_IPlane(Ixx,Ixy,np.arange(1,max_iter+1),error)
+
+# Softmax Regression
+def softmax_test():
+    # setup
+    n = 300
+    param = simple_paramters(n,n,-1,1)
+    # sample
+    data = sample_gaussian(param, 2)
+    # Perceptron
+    softmax = SOFTMAX()
+    # Train and Plot
+    max_iter = 100
+    alpha = 0.0001
+    Ixx, Ixy, error = softmax.info_train(data[:,0:-1], data[:,-1], max_iter, alpha)
+    softmax.plot_IPlane(Ixx,Ixy,np.arange(1,max_iter+1),error)
+
+# K Means Clustering
+def kmeans_test():
+    # setup
+    n = 300
+    param = simple_paramters(n,n,0,1)
+    # sample
+    data = sample_gaussian(param, 2)
+    # Perceptron
+    kmeans = KMEANS()
+    # Train and Plot
+    n_clusters = 2
+    n_epoch = 100
+    Ixx, Ixy, error = kmeans.info_train(data[:,0:-1], data[:,-1], n_clusters, n_epoch)
+    kmeans.plot_IPlane(Ixx,Ixy,np.arange(1,n_epoch+1),error)
 
 
 # main function of tests to run
 def main():
     # simple_test()
     # consitency()
-    perceptron_test()
+    # perceptron_test()
+    logistic_test()
+    # softmax_test()
+    # kmeans_test()
 
 if __name__ == '__main__':
     main()

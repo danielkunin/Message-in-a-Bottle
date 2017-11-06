@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+# from sklearn.metrics import pairwise_distances_argmin
 from info_measures import *
 
 # Perceptron (https://machinelearningmastery.com/implement-perceptron-algorithm-scratch-python/)
@@ -33,7 +34,7 @@ class PERCEPTRON:
         weights = [0.0 for i in range(m)]
         Ixx = np.zeros(n_epoch)
         Ixy = np.zeros(n_epoch)
-        err = np.zeros(n_epoch,dtype=np.float64)
+        err = np.zeros(n_epoch)
         for epoch in range(n_epoch):
             # Calculate Mutual Information
             predictions = list()
@@ -65,22 +66,124 @@ class PERCEPTRON:
         return predictions
 
     # Plot to Information Plane
-    def plot_IPlane(self,x,y,n):
+    def plot_IPlane(self,x,y,n,e):
         fig, ax = plt.subplots()
+        fig.suptitle("Perceptron in the Information Plane", fontsize="x-large")
+        plt.subplot(1, 2, 1)
         plt.scatter(x,y,c=n,s=20,cmap='seismic')
-        plt.colorbar()
+        cbar = plt.colorbar()
+        cbar.ax.set_ylabel('Epoch', rotation=270)
         ax.grid(True)
         plt.xlabel('I(X;X~)')
         plt.ylabel('I(X~;Y)')
-        plt.title("Perceptron in the Information Plane")
+        plt.subplot(1, 2, 2)
+        plt.scatter(x,y,c=e,s=20,cmap='seismic')
+        cbar = plt.colorbar()
+        cbar.ax.set_ylabel('Training Error', rotation=270)
+        ax.grid(True)
+        plt.xlabel('I(X;X~)')
+        plt.ylabel('I(X~;Y)')
         plt.show()
+
+# K Means Clustering (https://jakevdp.github.io/PythonDataScienceHandbook/05.11-k-means.html)
+class KMEANS:
+
+    def __init__(self):
+    	pass
+
+    # def info_train(self, X, Y, n_clusters, n_epoch, rseed=2):
+    # 	rng = np.random.RandomState(rseed)
+    # 	k = rng.permutation(X.shape[0])[:n_clusters]
+    # 	centers = X[k]
+    # 	Ixx = np.zeros(n_epoch)
+    # 	Ixy = np.zeros(n_epoch)
+    # 	err = np.zeros(n_epoch)
+    # 	for i in range(n_epoch):
+    # 		labels = pairwise_distances_argmin(X, centers)
+    # 		new_centers = np.array([X[labels == j].mean(0) for j in range(n_clusters)])
+    # 		centers = new_centers
+    # 		err[i] = np.sum(labels == Y) / len(Y)
+    # 		data = np.column_stack((X,labels))
+    # 		Ixx[i] = KDE(data)
+    # 		Ixy[i] = DISCRETE(labels, Y)
+    # 	return Ixx, Ixy, err
+
+
+# Softmax Logistic Regression
+class SOFTMAX:
+
+    def __init__(self):
+    	pass
+
+    # def gradient(self, theta, X_train, y_train, alpha):
+    # 	theta -= alpha * np.matmul(np.transpose(X_train), (h_vec(theta, X_train) - y_train))
+
+    # def h_vec(self, theta, X):
+    # 	eta = np.matmul(X, theta)
+    # 	temp = np.exp(eta - np.reshape(np.amax(eta, axis=1), [-1, 1]))
+    # 	return (temp / np.reshape(np.sum(temp, axis=1), [-1, 1]))
+
+    # def info_train(self, X_train, y_train, max_iter, alpha):
+    # 	theta = np.zeros([X_train.shape[1],10])
+    # 	Ixx = np.zeros(max_iter)
+    # 	Ixy = np.zeros(max_iter)
+    # 	err = np.zeros(max_iter)
+    # 	for i in range(max_iter):
+    # 		pred = np.argmax(self.h_vec(theta, X_train), axis=1)
+    # 		err[i] = np.sum(pred == np.argmax(y_train, axis=1)) / float(len(y_train))
+    # 		data = np.column_stack((X_train,pred))
+    # 		Ixx[i] = KDE(data)
+    # 		Ixy[i] = DISCRETE(pred, y_train)
+    # 		self.gradient(theta, X_train, y_train, alpha)
+    # 	return Ixx, Ixy, err
 
 
 # Logistic Regression
 class LOGISTIC:
 
     def __init__(self):
-        pass
+    	pass
+
+    def gradient(self, theta, X_train, y_train, alpha):
+    	theta -= alpha * np.squeeze(np.matmul(np.reshape(self.h_vec(theta, X_train) - y_train, [1, -1]), X_train))
+
+    def h_vec(self, theta, X):
+    	return 1 / (1 + np.exp(-np.matmul(X,theta)))
+
+    def info_train(self, X_train, y_train, max_iter, alpha):
+    	theta = np.zeros([X_train.shape[1]])
+    	Ixx = np.zeros(max_iter)
+    	Ixy = np.zeros(max_iter)
+    	err = np.zeros(max_iter)
+    	for i in range(max_iter):
+    		pred = (np.sign(self.h_vec(theta, X_train) - 0.5) + 1) / 2
+    		err[i] = np.sum(pred != y_train) / len(y_train)
+    		data = np.column_stack((X_train[:,1:],pred))
+    		Ixx[i] = KDE(data)
+    		Ixy[i] = DISCRETE(pred, y_train)
+    		self.gradient(theta, X_train, y_train, alpha)
+    	return Ixx, Ixy, err
+
+
+    # Plot to Information Plane
+    def plot_IPlane(self,x,y,n,e):
+        fig, ax = plt.subplots()
+        fig.suptitle("Logistic Regression in the Information Plane", fontsize="x-large")
+        plt.subplot(1, 2, 1)
+        plt.scatter(x,y,c=n,s=20,cmap='seismic')
+        cbar = plt.colorbar()
+        cbar.ax.set_ylabel('Epoch', rotation=270)
+        ax.grid(True)
+        plt.xlabel('I(X;X~)')
+        plt.ylabel('I(X~;Y)')
+        plt.subplot(1, 2, 2)
+        plt.scatter(x,y,c=e,s=20,cmap='seismic')
+        cbar = plt.colorbar()
+        cbar.ax.set_ylabel('Training Error', rotation=270)
+        ax.grid(True)
+        plt.xlabel('I(X;X~)')
+        plt.ylabel('I(X~;Y)')
+        plt.show()
 
 
 # Linear Discriminant Analysis
