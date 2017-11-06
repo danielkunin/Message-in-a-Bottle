@@ -29,15 +29,18 @@ class PERCEPTRON:
      
     # Estimate Perceptron weights and record mutual information  
     def info_train(self, train, l_rate, n_epoch):
-        weights = [0.0 for i in range(len(train[0]))]
+        n,m = train.shape
+        weights = [0.0 for i in range(m)]
         Ixx = np.zeros(n_epoch)
         Ixy = np.zeros(n_epoch)
+        err = np.zeros(n_epoch,dtype=np.float64)
         for epoch in range(n_epoch):
             # Calculate Mutual Information
             predictions = list()
             for row in train:
                 prediction = self.predict(row, weights)
                 predictions.append(prediction)
+            err[epoch] = (train[:,-1] != predictions).sum() * 1. / n
             data = np.zeros(train.shape)
             data[:,0:-1] = train[:,0:-1]
             data[:,-1] = predictions
@@ -50,7 +53,7 @@ class PERCEPTRON:
                 weights[0] = weights[0] + l_rate * error
                 for i in range(len(row)-1):
                     weights[i + 1] = weights[i + 1] + l_rate * error * row[i]
-        return Ixx, Ixy
+        return Ixx, Ixy, err
 
     # Perceptron Algorithm With Stochastic Gradient Descent
     def perceptron(self, train, test, l_rate, n_epoch):
@@ -64,7 +67,7 @@ class PERCEPTRON:
     # Plot to Information Plane
     def plot_IPlane(self,x,y,n):
         fig, ax = plt.subplots()
-        plt.scatter(x,y,c=n,s=20)
+        plt.scatter(x,y,c=n,s=20,cmap='seismic')
         plt.colorbar()
         ax.grid(True)
         plt.xlabel('I(X;X~)')

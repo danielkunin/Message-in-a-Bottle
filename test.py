@@ -96,8 +96,8 @@ def perceptron_test():
     # Train and Plot
     l_rate = 0.01
     n_epoch = 1000
-    Ixx, Ixy = perceptron.info_train(data, l_rate, n_epoch)
-    perceptron.plot_IPlane(Ixx,Ixy,np.arange(1,n_epoch+1))
+    Ixx, Ixy, error = perceptron.info_train(data, l_rate, n_epoch)
+    perceptron.plot_IPlane(Ixx,Ixy,error)#np.arange(1,n_epoch+1))
 
 
 # main function of tests to run
