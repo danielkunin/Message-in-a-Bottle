@@ -103,7 +103,7 @@ def perceptron_test():
 def logistic_test():
     # setup
     n = 300
-    param = simple_paramters(n,n,-1,1)
+    param = simple_paramters(n,n,0,1)
     # sample
     data = sample_gaussian(param, 2)
     # Perceptron
