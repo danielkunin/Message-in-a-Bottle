@@ -115,6 +115,25 @@ def logistic_test():
     Ixx, Ixy, error = logistic.info_train(X, data[:,-1], max_iter, alpha)
     logistic.plot_IPlane(Ixx,Ixy,np.arange(1,max_iter+1),error)
 
+
+# Logistic Regression
+def logistic_test():
+    # setup
+    n = 300
+    param = simple_paramters(n,n,0,1)
+    # sample
+    data = sample_gaussian(param, 2)
+    # Perceptron
+    logistic = LOGISTIC()
+    # Train and Plot
+    max_iter = 1000
+    alpha = 0.0001
+    lmbda = 0
+    # X = np.concatenate((np.ones((data.shape[0],1)), data[:,0:-1]), axis=1)
+    X = np.concatenate((np.ones((data.shape[0],1)), data[:,0:-1],np.square(data[:,0:-1])), axis=1)
+    Ixx, Ixy, error = logistic.info_train(X, data[:,-1], max_iter, alpha, lmbda)
+    logistic.plot_IPlane(Ixx,Ixy,np.arange(1,max_iter+1),error)
+
 # Softmax Regression
 def softmax_test():
     # setup

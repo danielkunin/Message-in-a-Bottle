@@ -70,14 +70,14 @@ class PERCEPTRON:
         fig, ax = plt.subplots()
         fig.suptitle("Perceptron in the Information Plane", fontsize="x-large")
         plt.subplot(1, 2, 1)
-        plt.scatter(x,y,c=n,s=20,cmap='seismic')
+        plt.scatter(x,y,c=n,s=20,cmap='viridis')
         cbar = plt.colorbar()
         cbar.ax.set_ylabel('Epoch', rotation=270)
         ax.grid(True)
         plt.xlabel('I(X;X~)')
         plt.ylabel('I(X~;Y)')
         plt.subplot(1, 2, 2)
-        plt.scatter(x,y,c=e,s=20,cmap='seismic')
+        plt.scatter(x,y,c=e,s=20,cmap='viridis')
         cbar = plt.colorbar()
         cbar.ax.set_ylabel('Training Error', rotation=270)
         ax.grid(True)
@@ -138,31 +138,35 @@ class SOFTMAX:
     # 	return Ixx, Ixy, err
 
 
+
 # Logistic Regression
 class LOGISTIC:
 
     def __init__(self):
-    	pass
+        pass
 
-    def gradient(self, theta, X_train, y_train, alpha):
-    	theta -= alpha * np.squeeze(np.matmul(np.reshape(self.h_vec(theta, X_train) - y_train, [1, -1]), X_train))
+    # Need to clean up...
+    def gradient(self, theta, X_train, y_train, alpha, lmbda):
+        theta[0] += alpha * lmbda / X_train.shape[0] * theta[0]
+        theta -= alpha * (np.squeeze(np.matmul(np.reshape(self.h_vec(theta, X_train) - y_train, [1, -1]), X_train)) 
+            + lmbda / X_train.shape[0] * theta)
 
     def h_vec(self, theta, X):
-    	return 1 / (1 + np.exp(-np.matmul(X,theta)))
+        return 1 / (1 + np.exp(-np.matmul(X,theta)))
 
-    def info_train(self, X_train, y_train, max_iter, alpha):
-    	theta = np.zeros([X_train.shape[1]])
-    	Ixx = np.zeros(max_iter)
-    	Ixy = np.zeros(max_iter)
-    	err = np.zeros(max_iter)
-    	for i in range(max_iter):
-    		pred = (np.sign(self.h_vec(theta, X_train) - 0.5) + 1) / 2
-    		err[i] = np.sum(pred != y_train) / len(y_train)
-    		data = np.column_stack((X_train[:,1:],pred))
-    		Ixx[i] = KDE(data)
-    		Ixy[i] = DISCRETE(pred, y_train)
-    		self.gradient(theta, X_train, y_train, alpha)
-    	return Ixx, Ixy, err
+    def info_train(self, X_train, y_train, max_iter, alpha, lmbda):
+        theta = np.zeros([X_train.shape[1]])
+        Ixx = np.zeros(max_iter)
+        Ixy = np.zeros(max_iter)
+        err = np.zeros(max_iter)
+        for i in range(max_iter):
+            pred = (np.sign(self.h_vec(theta, X_train) - 0.5) + 1) / 2
+            err[i] = np.sum(pred != y_train) / len(y_train)
+            data = np.column_stack((X_train[:,1:],pred))
+            Ixx[i] = KDE(data)
+            Ixy[i] = DISCRETE(pred, y_train)
+            self.gradient(theta, X_train, y_train, alpha, lmbda)
+        return Ixx, Ixy, err
 
 
     # Plot to Information Plane
@@ -170,21 +174,20 @@ class LOGISTIC:
         fig, ax = plt.subplots()
         fig.suptitle("Logistic Regression in the Information Plane", fontsize="x-large")
         plt.subplot(1, 2, 1)
-        plt.scatter(x,y,c=n,s=20,cmap='seismic')
+        plt.scatter(x,y,c=n,s=20,cmap='viridis')
         cbar = plt.colorbar()
         cbar.ax.set_ylabel('Epoch', rotation=270)
         ax.grid(True)
         plt.xlabel('I(X;X~)')
         plt.ylabel('I(X~;Y)')
         plt.subplot(1, 2, 2)
-        plt.scatter(x,y,c=e,s=20,cmap='seismic')
+        plt.scatter(x,y,c=e,s=20,cmap='viridis')
         cbar = plt.colorbar()
         cbar.ax.set_ylabel('Training Error', rotation=270)
         ax.grid(True)
         plt.xlabel('I(X;X~)')
         plt.ylabel('I(X~;Y)')
         plt.show()
-
 
 # Linear Discriminant Analysis
 class LDA:
