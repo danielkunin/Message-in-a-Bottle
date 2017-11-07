@@ -58,9 +58,10 @@ def KDE(data):
 	MI = Hx
 	# H(X|Y)
 	for y in np.unique(Y):
-		kernel = stats.gaussian_kde(X[Y == y].T)
-		Hx_y = -kernel.logpdf(X[Y == y].T).sum()
-		MI -= Hx_y
+		if X[Y == y].shape[0] >= d: #need to make sure there are at least as many obs as dim
+			kernel = stats.gaussian_kde(X[Y == y].T)
+			Hx_y = -kernel.logpdf(X[Y == y].T).sum()
+			MI -= Hx_y
 	# Normalize and Convert Base 2
 	MI /= (n * np.log(2))
 	return MI

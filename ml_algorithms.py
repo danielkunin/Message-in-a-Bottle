@@ -145,11 +145,9 @@ class LOGISTIC:
     def __init__(self):
         pass
 
-    # Need to clean up...
     def gradient(self, theta, X_train, y_train, alpha, lmbda):
-        theta[0] += alpha * lmbda / X_train.shape[0] * theta[0]
         theta -= alpha * (np.squeeze(np.matmul(np.reshape(self.h_vec(theta, X_train) - y_train, [1, -1]), X_train)) 
-            + lmbda / X_train.shape[0] * theta)
+            - 2 * lmbda * theta)# <- l2 #+ lmbda * np.sign(theta)) <- l1
 
     def h_vec(self, theta, X):
         return 1 / (1 + np.exp(-np.matmul(X,theta)))
