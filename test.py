@@ -110,9 +110,9 @@ def logistic_test():
     # Perceptron
     logistic = LOGISTIC()
     # Train and Plot
-    max_iter = 1000
+    max_iter = 30000
     alpha = 0.0001
-    lmbda = 0
+    lmbda = 500#120
     #X = np.concatenate((np.ones((data.shape[0],1)), data[:,0:-1]), axis=1)
     X = np.concatenate((np.ones((data.shape[0],1)), data[:,0:-1],np.square(data[:,0:-1])), axis=1)
     Ixx, Ixy, error = logistic.info_train(X, data[:,-1], max_iter, alpha, lmbda)
