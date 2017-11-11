@@ -43,6 +43,24 @@ def simple_paramters(n1, n2, y1, y2):
     return param
 
 
+# plots first two dim dataset (data) and contour lines (pos, cond)
+def complex_paramters(n1, n2, n3, y1, y2, y3):
+    # define y1   
+    mu1 = np.array([0,0])
+    sig1 = np.eye(2)
+    # define y2
+    mu2 = np.array([3,5])
+    sig2 = np.array([[3,2],[2,10]])
+    # define y3
+    mu3 = np.array([1,2])
+    sig3 = np.array([[2,0.5],[0.5,2]])
+    # set parameters   
+    param = [{'mu': mu1, 'cov': sig1, 'n': n1, 'y': y1},
+             {'mu': mu2, 'cov': sig2, 'n': n2, 'y': y2},
+             {'mu': mu3, 'cov': sig3, 'n': n3, 'y': y3}]
+    return param
+
+
 # generates two gaussian datasets
 def simple_test():
     # setup
@@ -67,96 +85,88 @@ def simple_test():
 # tests consitency of mutual information estimates
 def consitency():
     # setup
-    n,step,m = 1000,10,10
+    n, step, m = 1000,10,10
     param = simple_paramters(n,n,0,1)
-    size = np.arange(step,n+step,step)
-    kde = np.zeros((m,int(n/step)))
+    size = np.arange(step, n + step, step)
+    kde = np.zeros((m, int(n / step)))
     for i in range(m):
         # sample
-        data = sample_gaussian(param, 2)
-        Y = data[:,-1]
-        X_y0 = data[Y == 0]
-        X_y1 = data[Y == 1]
+        X, Y = sample_gaussian(param, 2)
+        X_y0 = X[Y == 0]
+        X_y1 = X[Y == 1]
         # calculate mutual information
         for j in size:
-            d = np.vstack([X_y0[0:j,:], X_y1[0:j,:]])
-            kde[i,int((j-step)/step)] = KDE(d)
+            kde[i, int((j - step) / step)] = KDE(X_y0[0:j,:], X_y1[0:j,:])
     # plot 2D data
     plot_lines(np.tile(size,(m, 1)),kde,'KDE I(X;Y) Estimator')
 
 # Perceptron
 def perceptron_test():
     # setup
-    n = 300
-    param = simple_paramters(n,n,0,1)
+    m = 300
+    param = simple_paramters(m, m, 0, 1)
     # sample
-    data = sample_gaussian(param, 2)
-    # Perceptron
-    perceptron = PERCEPTRON()
-    # Train and Plot
-    l_rate = 0.01
+    X_trn, Y_trn = sample_gaussian(param, 2)
+    X_trn = add_ones(X_trn)
+    # perceptron
+    perceptron = PERCEPTRON(X_trn, Y_trn, [], [])
+    # train
     n_epoch = 1000
-    Ixx, Ixy, error = perceptron.info_train(data, l_rate, n_epoch)
-    perceptron.plot_IPlane(Ixx,Ixy,np.arange(1,n_epoch+1),error)
+    l_rate = 0.01
+    batch = m
+    lmbda = 0
+    perceptron.train(l_rate, n_epoch, batch, lmbda)
+    # plot
+    perceptron.plot()
 
 
 # Logistic Regression
 def logistic_test():
-    # setup
-    n = 300
-    param = simple_paramters(n,n,0,1)
-    # sample
-    data = sample_gaussian(param, 2)
-    # Perceptron
-    logistic = LOGISTIC()
-    # Train and Plot
-    max_iter = 30000
-    alpha = 0.0001
-    lmbda = 500#120
-    #X = np.concatenate((np.ones((data.shape[0],1)), data[:,0:-1]), axis=1)
-    X = np.concatenate((np.ones((data.shape[0],1)), data[:,0:-1],np.square(data[:,0:-1])), axis=1)
-    Ixx, Ixy, error = logistic.info_train(X, data[:,-1], max_iter, alpha, lmbda)
-    logistic.plot_IPlane(Ixx,Ixy,np.arange(1,max_iter+1),error)
+    # setup parameters
+    m = 300
+    param = simple_paramters(m, m, 0, 1)
+    # sample data
+    X_trn, Y_trn = sample_gaussian(param, 2)
+    X_trn = square(X_trn)
+    X_trn = add_ones(X_trn)
+    # logistic regression
+    logistic = LOGISTIC(X_trn, Y_trn, [], [])
+    # train
+    n_epoch = 1000
+    l_rate = 0.01
+    batch = m
+    lmbda = 0
+    logistic.train(l_rate, n_epoch, batch, lmbda)
+    # plot
+    logistic.plot()
 
 # Softmax Regression
 def softmax_test():
     # setup
     n = 300
-    param = simple_paramters(n,n,-1,1)
+    param = complex_paramters(n,n,n,0,1,2)
     # sample
-    data = sample_gaussian(param, 2)
-    # Perceptron
+    X_train, Y_train = sample_gaussian(param, 2)
+    X_train = square(X_train)
+    X_train = add_ones(X_train)
+    # logistic regression
     softmax = SOFTMAX()
-    # Train and Plot
-    max_iter = 100
-    alpha = 0.0001
-    Ixx, Ixy, error = softmax.info_train(data[:,0:-1], data[:,-1], max_iter, alpha)
-    softmax.plot_IPlane(Ixx,Ixy,np.arange(1,max_iter+1),error)
-
-# K Means Clustering
-def kmeans_test():
-    # setup
-    n = 300
-    param = simple_paramters(n,n,0,1)
-    # sample
-    data = sample_gaussian(param, 2)
-    # Perceptron
-    kmeans = KMEANS()
-    # Train and Plot
-    n_clusters = 2
-    n_epoch = 100
-    Ixx, Ixy, error = kmeans.info_train(data[:,0:-1], data[:,-1], n_clusters, n_epoch)
-    kmeans.plot_IPlane(Ixx,Ixy,np.arange(1,n_epoch+1),error)
+    # train
+    n_epoch = 1000
+    l_rate = 0.0001
+    num_class = 3
+    I_xx, I_xy, E_train, _ = softmax.train(X_train, Y_train, l_rate, n_epoch, num_class)
+    # plot
+    softmax.plot(I_xx, I_xy, E_train, np.arange(1, n_epoch + 1))
 
 
 # main function of tests to run
 def main():
     # simple_test()
     # consitency()
-    # perceptron_test()
+    perceptron_test()
     logistic_test()
     # softmax_test()
-    # kmeans_test()
 
 if __name__ == '__main__':
     main()
