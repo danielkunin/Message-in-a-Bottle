@@ -30,7 +30,7 @@ class PERCEPTRON:
         theta = np.zeros(n)
         I_xx = np.zeros((2, n_epoch))
         I_xy = np.zeros((2, n_epoch))
-        Err_trn = np.zeros(n_epoch)
+        Err = np.zeros((2, n_epoch))
         for k in range(n_epoch):
         	# gradient descent
         	for i in range(0, m, batch):
@@ -49,10 +49,10 @@ class PERCEPTRON:
         	I_xy[0, k] = EMPIRICAL_DD(pred, self.Y_trn)
         	I_xy[1, k] = KDE_CD(np.reshape(h, (-1,1)), self.Y_trn)
         	# training error
-        	Err_trn[k] = np.sum(pred != self.Y_trn) / m
+        	Err[0, k] = np.sum(pred != self.Y_trn) / m
         self.I_xx = I_xx
         self.I_xy = I_xy
-        self.Err_trn = Err_trn
+        self.Err = Err
         self.Epoch = np.arange(1, n_epoch + 1)
         self.Theta = theta
 
@@ -89,7 +89,7 @@ class LOGISTIC:
     	theta = np.zeros(n)
     	I_xx = np.zeros((2, n_epoch))
     	I_xy = np.zeros((2, n_epoch))
-    	Err_trn = np.zeros(n_epoch)
+    	Err = np.zeros((2, n_epoch))
     	for k in range(n_epoch):
     		# gradient descent
     		for i in range(0, m, batch):
@@ -98,19 +98,21 @@ class LOGISTIC:
     			err = h - self.Y_trn[i:min(i + batch,m)]
     			self.gd(theta, x, err, (l_rate / float(batch)), lmbda)
     		# calculate hypothesis and prediction
-    		h_theta = self.hypothesis(theta, self.X_trn)
-    		pred = self.predict(h_theta)
+    		h_trn = self.hypothesis(theta, self.X_trn)
+    		p_trn = self.predict(h_trn)
+    		p_tst = self.predict(self.hypothesis(theta, self.X_tst))
     		# mutual information with input
-    		I_xx[0, k] = KDE_CD(self.X_trn[:,1:], pred)
-    		I_xx[1, k] = KDE_CC(self.X_trn[:,1:], np.reshape(h_theta, (-1,1)))
+    		I_xx[0, k] = KDE_CD(self.X_trn[:,1:], p_trn)
+    		I_xx[1, k] = KDE_CC(self.X_trn[:,1:], np.reshape(h_trn, (-1,1)))
     		# mutual information with output
-    		I_xy[0, k] = EMPIRICAL_DD(pred, self.Y_trn)
-    		I_xy[1, k] = KDE_CD(np.reshape(h_theta, (-1,1)), self.Y_trn)
-    		# training error
-    		Err_trn[k] = np.sum(pred != self.Y_trn) / m
+    		I_xy[0, k] = EMPIRICAL_DD(p_trn, self.Y_trn)
+    		I_xy[1, k] = KDE_CD(np.reshape(h_trn, (-1,1)), self.Y_trn)
+    		# training and testing error
+    		Err[0, k] = np.sum(p_trn != self.Y_trn) / m
+    		Err[1, k] = np.sum(p_tst != self.Y_tst) / self.X_tst.shape[0]
     	self.I_xx = I_xx
     	self.I_xy = I_xy
-    	self.Err_trn = Err_trn
+    	self.Err = Err
     	self.Epoch = np.arange(1, n_epoch + 1)
     	self.Theta = theta
 
@@ -118,6 +120,7 @@ class LOGISTIC:
     # plot to information plane
     def plot(self):
         info_plane(self)
+        accuracy_plane(self)
 
 # Softmax Logistic Regression (Syntax/Style needs to be upated to fit others)
 class SOFTMAX:
@@ -170,29 +173,6 @@ class SOFTMAX:
         plt.ylabel('I(X~;Y)')
         plt.show()
 
-
-
-
-
-
-
-# Linear Discriminant Analysis
-class LDA:
-
-    def __init__(self):
-        pass
-
-# Quadratic Discriminant Analysis
-class QDA:
-
-    def __init__(self):
-        pass
-
-# Multinomial Naive Bayes
-class BAYES:
-
-    def __init__(self):
-        pass
 
 # Support Vector Machine
 class SVM:

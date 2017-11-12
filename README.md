@@ -36,4 +36,5 @@ Statistical learning at its core can be understood as a constrained compression 
 + generate_data.py - Generate data from different distributions
 + info_measures.py - Estimates measures of information
 + ml_algorithms.py - Implements different learning algorithms
++ plots.py - Contains a variety of plotting functions
 

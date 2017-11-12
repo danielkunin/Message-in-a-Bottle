@@ -1,17 +1,28 @@
 import numpy as np
 from scipy.stats import multivariate_normal as mvn
 
+
+# plots first two dim dataset (data) and contour lines (pos, cond)
+def binary_paramters():
+    pi = np.array([0.5, 0.5])
+    mu = np.array([[0., 0.],[3., 5.]])
+    cov = np.array([[[1.,0.],[0.,1.]],[[3.,2.],[2.,10.]]])
+    return pi, mu, cov
+
+# plots first two dim dataset (data) and contour lines (pos, cond)
+def complex_paramters():
+    pi = np.array([1/3, 1/3, 1/3])
+    mu = np.array([[0., 0.],[3., 5.],[5,2]])
+    cov = np.array([[[1.,0.],[0.,1.]],[[3.,2.],[2.,10.]],[[2,0.5],[0.5,2]]])
+    return pi, mu, cov
+
 # Sample data from multivariate gaussian conditionals
-def sample_gaussian(param, dim):
+def sample_gaussian(pi, mu, cov, m):
 	# generate data
-	X = np.zeros((0, dim))
-	Y = np.zeros(0)
-	for p in param:
-		coord = np.random.multivariate_normal(p['mu'],p['cov'],p['n'])
-		label = np.full(p['n'], p['y'])
-		X = np.concatenate([X, coord])
-		Y = np.concatenate([Y, label])    
-	return X,Y
+	k = pi.size
+	Y = np.random.choice(k, size=m, p=pi)
+	X = np.array([np.random.multivariate_normal(mu[y], cov[y]) for y in Y])    
+	return X, Y
 
 # adds column of ones to features
 def add_ones(X):
@@ -22,14 +33,14 @@ def square(X):
 	return np.concatenate((X, np.square(X)), axis=1)
 
 # Computes mesh from multivariate gaussian conditionals
-def mesh_gaussian(param, dim, mins, maxs, num):
+def mesh_gaussian(mu, cov, mins, maxs, num):
 	# define grid of X values
 	X = [np.linspace(i,j,num) for i,j in zip(mins,maxs)]
 	pos = np.array(np.meshgrid(*X)).T
 	# generate conditional pdf
 	cond = []
-	for p in param:
-		rv = mvn(p['mu'],p['cov'])
+	for m,c in zip(mu,cov):
+		rv = mvn(m,c)
 		px_y = rv.pdf(pos)
 		px_y = px_y/np.sum(px_y)
 		cond.append(px_y)
