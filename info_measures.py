@@ -7,15 +7,20 @@ from sklearn.grid_search import GridSearchCV
 
 # Computes mutual infromation I(X;Y) of multivariate gaussians
 def I_TRUTH(pi, mus, Sigs, m):
-    k = np.size(pi)
-    ys = np.random.choice(k, size=m, p=pi)
-    xs = np.array([np.random.multivariate_normal(mus[y_i], Sigs[y_i]) for y_i in ys])
-    log_p_xi_g_yi = np.array([mvn.logpdf(x_i, mus[y_i], Sigs[y_i]) for x_i, y_i in zip(xs, ys)])
-    log_p_xi = np.log(np.array([np.sum([mvn.pdf(x_i, mus[y], Sigs[y])*pi[y] for y in np.arange(k)]) for x_i in xs]))
-    I_ = log_p_xi_g_yi - log_p_xi
-    I = np.cumsum(I_)/(np.arange(m)+1)
-    outputs = {'ys': ys, 'xs': xs, 'I': I}
-    return I[-1]#outputs
+	MI = 0
+	n = 0
+	for i in range(100):
+	    k = np.size(pi)
+	    ys = np.random.choice(k, size=m, p=pi)
+	    xs = np.array([np.random.multivariate_normal(mus[y_i], Sigs[y_i]) for y_i in ys])
+	    log_p_xi_g_yi = np.array([mvn.logpdf(x_i, mus[y_i], Sigs[y_i]) for x_i, y_i in zip(xs, ys)])
+	    log_p_xi = np.log(np.array([np.sum([mvn.pdf(x_i, mus[y], Sigs[y])*pi[y] for y in np.arange(k)]) for x_i in xs]))
+	    I_ = log_p_xi_g_yi - log_p_xi
+	    I = np.cumsum(I_)/(np.arange(m)+1)
+	    outputs = {'ys': ys, 'xs': xs, 'I': I}
+	    n += I[-1] > 0
+	    MI += I[-1] * (I[-1] > 0)
+	return MI / n
 
 
 # Binning
@@ -90,31 +95,32 @@ def EMPIRICAL_DD(X, Y):
 	return MI
 
 
+
 # Calculates KDE estimated entropy of X with cross validated bandwidth
 def KDE_ENTROPY(X, cv):
-	if X.shape[0] <= 1:
-		return 0
-	bands = {'bandwidth': np.logspace(-1, 1, 2*cv)}
-	grid = GridSearchCV(KernelDensity(), bands)
-	grid.fit(X)
-	kde = grid.best_estimator_
-	return -kde.score(X)
+	H = 0
+	if cv == 0:
+		H = -stats.gaussian_kde(X.T).logpdf(X.T).sum()
+	else:
+		# if X.shape[0] <= 1:
+		# 	return 0
+		bands = {'bandwidth': np.logspace(-1, 1, 2*cv)}
+		grid = GridSearchCV(KernelDensity(), bands)
+		grid.fit(X)
+		kde = grid.best_estimator_
+		H = -kde.score(X)
+	return H
 
 
 # Kernel Density Estimator Method for a Continuous and Discrete Random Variable
 def KDE_CD(X, Y):
 	n, d = X.shape
 	# entropy of X
-	# kernel = stats.gaussian_kde(X.T)
-	# Hx = -kernel.logpdf(X.T).sum()
-	MI = KDE_ENTROPY(X, 20)
+	MI = KDE_ENTROPY(X, 10)
 	# conditional entropy of X|Y
 	for y in np.unique(Y):
-		MI -= KDE_ENTROPY(X[Y == y], 20)
-		# if X[Y == y].shape[0] >= d: # check there are as many observations as feature dimensions
-		# 	kernel = stats.gaussian_kde(X[Y == y].T)
-		# 	Hx_y = -kernel.logpdf(X[Y == y].T).sum()
-		# 	MI -= Hx_y
+		if X[Y == y].shape[0] >= d: # check there are as many observations as feature dimensions
+			MI -= KDE_ENTROPY(X[Y == y], 10)
 	# normalize and convert to bits
 	MI /= (n * np.log(2))
 	return MI
@@ -126,13 +132,10 @@ def KDE_CC(X, Y):
 		# entropy of HXY
 		XY = np.concatenate((X, Y), axis=1)
 		Hxy = KDE_ENTROPY(XY, 20)
-		# Hxy = -stats.gaussian_kde(XY.T).logpdf(XY.T).sum()
 		# entropy of X
 		Hx = KDE_ENTROPY(X, 20)
-		# Hx = -stats.gaussian_kde(X.T).logpdf(X.T).sum()
 		# entropy of Y
 		Hy = KDE_ENTROPY(Y, 20)
-		# Hy = -stats.gaussian_kde(Y.T).logpdf(Y.T).sum()
 		# mutual information
 		I = Hx + Hy - Hxy
 		# normalize and convert to bits
@@ -141,8 +144,6 @@ def KDE_CC(X, Y):
 	except np.linalg.linalg.LinAlgError as err:
 		return 0
 
-
-# K-Nearest Neighbor Method (KNN)
 
 
 # Variational Bound Method (VAR)

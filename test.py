@@ -20,28 +20,30 @@ def sample():
 
 # tests consitency of mutual information estimators
 def consitency():
+    print("=== Consistency of MI ===")
     # setup
-    n, step, m = 1000,50,10
+    n, step, m = 2000,50,10
     pi, mu, cov = binary_paramters()
     size = np.arange(step, n + step, step)
     kde = np.zeros((m, int(n / step)))
     for i in range(m):
+    	print("== %d of %d ==" % (i + 1, m))
         # sample
         X, Y = sample_gaussian(pi, mu, cov, 4 * n)
         X_y0 = X[Y == 0]
         X_y1 = X[Y == 1]
         # calculate mutual information
         for j in size:
-            # kde[i, int((j - step) / step)] = KDE_CD(X[0:j], Y[0:j])
+            kde[i, int((j - step) / step)] = KDE_CD(X[0:j], Y[0:j])
             # kde[i, int((j - step) / step)] = KDE_CC(X_y0[0:j,:], X_y1[0:j,:])
-            kde[i, int((j - step) / step)] = I_BIN(X[0:j], Y[0:j])
+            # kde[i, int((j - step) / step)] = I_BIN(X[0:j], Y[0:j])
     mean = np.mean(kde, axis=0)
     std = np.std(kde, axis=0)
-    # I = I_hat(pi, mu, cov, 10^8)
-    truth = [I_TRUTH(pi, mu, cov, 10^8) for i in size]
-    # plot 2D data
+    mi = I_TRUTH(pi, mu, cov, 10^8)
+    truth = [mi for i in size]
+    # plot estimates
     # plot_line(np.tile(size,(m, 1)), kde, 'KDE I(X,Y) Estimator')
-    plot_area(size, truth, mean, std, 'Bin I(X,Y) Estimator')
+    plot_area(size, truth, mean, std, 'KDE with CV Method')
 
 # Perceptron
 def perceptron_test():

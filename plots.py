@@ -96,7 +96,7 @@ def plot_2d(x, y, pos, cond):
 # plot average of line plot with standard deviation
 def plot_area(x, y, mean, std, title):
 	fig, ax = plt.subplots()
-	plt.fill_between(x, mean - std, mean + std, color="#1189D5")  
+	plt.fill_between(x, mean - std, mean + std, color="#3CBEA3")#1189D5")  
 	plt.plot(x, mean, color="white", lw=2)  
 	plt.plot(x, y, '--', color="black", lw=1)  
 	ax.grid(True)
