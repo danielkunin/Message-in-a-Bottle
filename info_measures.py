@@ -78,18 +78,27 @@ def I_BIN(X, Y):
 
     return MIcorrectedFO
 
+# Calculates entropy term avoiding log(0) problem
+def entropy(x):
+	if x == 0: 
+		return 0.0
+	else: 
+		return - x * np.log2(x)
+
+
 # Empirical Method for two discrete random variables
 def EMPIRICAL_DD(X, Y):
 	# Setup
-	n = len(X)
+	n = len(X) * 1.0
+	H = np.vectorize(entropy)
 	# Compute Empirical Distributions
 	valX, countX = np.unique(X, return_counts=True)
 	valY, countY = np.unique(Y, return_counts=True)
 	valXY, countXY = np.unique(zip(X,Y), return_counts=True)
 	# Compute Entropy
-	Hx = np.sum(-countX/n * np.log2(countX/n))
-	Hy = np.sum(-countY/n * np.log2(countY/n))
-	Hxy = np.sum(-countXY/n * np.log2(countXY/n))
+	Hx = np.sum(H(countX / n))
+	Hy = np.sum(H(countY / n))
+	Hxy = np.sum(H(countXY / n))
 	# Compute Mutual Information
 	MI = Hx + Hy - Hxy
 	return MI
@@ -116,11 +125,11 @@ def KDE_ENTROPY(X, cv):
 def KDE_CD(X, Y):
 	n, d = X.shape
 	# entropy of X
-	MI = KDE_ENTROPY(X, 10)
+	MI = KDE_ENTROPY(X, 0)
 	# conditional entropy of X|Y
 	for y in np.unique(Y):
 		if X[Y == y].shape[0] >= d: # check there are as many observations as feature dimensions
-			MI -= KDE_ENTROPY(X[Y == y], 10)
+			MI -= KDE_ENTROPY(X[Y == y], 0)
 	# normalize and convert to bits
 	MI /= (n * np.log(2))
 	return MI
@@ -131,11 +140,11 @@ def KDE_CC(X, Y):
 	try:
 		# entropy of HXY
 		XY = np.concatenate((X, Y), axis=1)
-		Hxy = KDE_ENTROPY(XY, 20)
+		Hxy = KDE_ENTROPY(XY, 0)
 		# entropy of X
-		Hx = KDE_ENTROPY(X, 20)
+		Hx = KDE_ENTROPY(X, 0)
 		# entropy of Y
-		Hy = KDE_ENTROPY(Y, 20)
+		Hy = KDE_ENTROPY(Y, 0)
 		# mutual information
 		I = Hx + Hy - Hxy
 		# normalize and convert to bits

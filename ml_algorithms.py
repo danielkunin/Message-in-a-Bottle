@@ -12,19 +12,15 @@ class PERCEPTRON:
         self.Y_tst = Y_tst
         self.name = "Perceptron"
 
-    # hypothesis function
     def hypothesis(self, theta, x):
     	return np.matmul(x,theta)
 
-    # predict class
     def predict(self, h_theta):
     	return (np.sign(h_theta) + 1) / 2.0
 
-    # gradient descent
     def gd(self, theta, x, err, l_rate, lmbda):
     	theta -= l_rate * np.squeeze(np.matmul(np.reshape(err, [1, -1]), x))
      
-    # train algorithm
     def train(self, l_rate, n_epoch, batch, lmbda):
         m, n = self.X_trn.shape
         theta = np.zeros(n)
@@ -42,6 +38,7 @@ class PERCEPTRON:
         	# predict
         	h = self.hypothesis(theta, self.X_trn)
         	pred = self.predict(h)
+        	p_tst = self.predict(self.hypothesis(theta, self.X_tst))
         	# mutual information with input
         	I_xx[0, k] = KDE_CD(self.X_trn[:,1:], pred)
         	I_xx[1, k] = KDE_CC(self.X_trn[:,1:], np.reshape(h, (-1,1)))
@@ -49,16 +46,19 @@ class PERCEPTRON:
         	I_xy[0, k] = EMPIRICAL_DD(pred, self.Y_trn)
         	I_xy[1, k] = KDE_CD(np.reshape(h, (-1,1)), self.Y_trn)
         	# training error
-        	Err[0, k] = np.sum(pred != self.Y_trn) / m
+        	Err[0, k] = np.sum(pred != self.Y_trn) / (m * 1.0)
+        	Err[1, k] = np.sum(p_tst != self.Y_tst) / (self.X_tst.shape[0] * 1.0)
         self.I_xx = I_xx
         self.I_xy = I_xy
-        self.Err = Err
+        self.Err = np.log2(Err)
         self.Epoch = np.arange(1, n_epoch + 1)
         self.Theta = theta
 
-    # plot to Information Plane
     def plot(self):
         info_plane(self)
+        info_curve(self)
+        error_plane(self)
+        error_curve(self)
 
 # Logistic Regression
 class LOGISTIC:
@@ -70,20 +70,16 @@ class LOGISTIC:
         self.Y_tst = Y_tst
         self.name = "Logistic Regression"
 
-    # hypothesis function
     def hypothesis(self, theta, x):
         return 1 / (1 + np.exp(-np.matmul(x,theta)))
 
-    # class prediction
     def predict(self, h_theta):
     	return (np.sign(h_theta - 0.5) + 1) / 2
 
-    # gradient descent
     def gd(self, theta, x, err, l_rate, lmbda):
         theta -= l_rate * (np.squeeze(np.matmul(np.reshape(err, [1, -1]), x)) + lmbda * np.sign(theta)) #L1
         # theta -= l_rate * (np.squeeze(np.matmul(np.reshape(err, [1, -1]), x)) - 2 * lmbda * theta) 	#L2
 
-    # train
     def train(self, l_rate, n_epoch, batch, lmbda):
     	m, n = self.X_trn.shape
     	theta = np.zeros(n)
@@ -108,27 +104,32 @@ class LOGISTIC:
     		I_xy[0, k] = EMPIRICAL_DD(p_trn, self.Y_trn)
     		I_xy[1, k] = KDE_CD(np.reshape(h_trn, (-1,1)), self.Y_trn)
     		# training and testing error
-    		Err[0, k] = np.sum(p_trn != self.Y_trn) / m
-    		Err[1, k] = np.sum(p_tst != self.Y_tst) / self.X_tst.shape[0]
+    		Err[0, k] = np.sum(p_trn != self.Y_trn) / (m * 1.0)
+    		Err[1, k] = np.sum(p_tst != self.Y_tst) / (self.X_tst.shape[0] * 1.0)
     	self.I_xx = I_xx
     	self.I_xy = I_xy
-    	self.Err = Err
+    	self.Err = np.log2(Err)
     	self.Epoch = np.arange(1, n_epoch + 1)
     	self.Theta = theta
 
 
-    # plot to information plane
     def plot(self):
         info_plane(self)
-        accuracy_plane(self)
+        info_curve(self)
+        error_plane(self)
+        error_curve(self)
 
 # Softmax Logistic Regression (Syntax/Style needs to be upated to fit others)
 class SOFTMAX:
 
-    def __init__(self):
-    	pass
+    def __init__(self, X_trn, Y_trn, X_tst, Y_tst):
+        self.X_trn = X_trn
+        self.Y_trn = Y_trn
+        self.X_tst = X_tst
+        self.Y_tst = Y_tst
+        self.name = "Softmax Regression"
 
-    def gradient(self, theta, X_train, y_train, alpha):
+    def gd(self, theta, X_train, y_train, alpha):
     	theta -= alpha * np.matmul(np.transpose(X_train), (self.h_vec(theta, X_train) - y_train))
 
     def h_vec(self, theta, X):
@@ -148,35 +149,69 @@ class SOFTMAX:
     		err[i] = np.sum(pred != y_orig) / len(y_train)
     		Ixx[i] = KDE(X_train[:,1:],pred)
     		Ixy[i] = EMPIRICAL_DD(pred, y_orig)
-    		self.gradient(theta, X_train, y_train, alpha)
+    		self.gd(theta, X_train, y_train, alpha)
     	return Ixx, Ixy, err, theta
 
-    # Plot to Information Plane
-    def plot(self, I_xx, I_xy, E_train, epoch):
-        fig, ax = plt.subplots()
-        fig.suptitle("Softmax Regression in the Information Plane", fontsize="x-large")
-        # information & epoch
-        plt.subplot(1, 2, 1)
-        plt.scatter(I_xx, I_xy, c=epoch, s=20, cmap='viridis')
-        cbar = plt.colorbar()
-        cbar.ax.set_ylabel('Epoch', rotation=270)
-        ax.grid(True)
-        plt.xlabel('I(X;X~)')
-        plt.ylabel('I(X~;Y)')
-        # information & training error
-        plt.subplot(1, 2, 2)
-        plt.scatter(I_xx, I_xy, c=E_train, s=20, cmap='viridis')
-        cbar = plt.colorbar()
-        cbar.ax.set_ylabel('Training Error', rotation=270)
-        ax.grid(True)
-        plt.xlabel('I(X;X~)')
-        plt.ylabel('I(X~;Y)')
-        plt.show()
+    def plot(self):
+        info_plane(self)
+        accuracy_plane(self)
 
 
 # Support Vector Machine
 class SVM:
     
-    def __init__(self):
-    	pass
+    def __init__(self, X_trn, Y_trn, X_tst, Y_tst):
+        self.X_trn = X_trn
+        self.Y_trn = Y_trn
+        self.X_tst = X_tst
+        self.Y_tst = Y_tst
+        self.name = "Support Vector Machine"
+
+    def svm_train(matrix, category):
+	    tau = 8.
+	    state = {}
+	    M, N = matrix.shape
+	    #####################
+	    Y = category
+	    matrix = 1. * (matrix > 0)
+	    squared = np.sum(matrix * matrix, axis=1)
+	    gram = matrix.dot(matrix.T)
+	    K = np.exp(-(squared.reshape((1, -1)) + squared.reshape((-1, 1)) - 2 * gram) / (2 * (tau ** 2)) )
+
+	    alpha = np.zeros(M)
+	    alpha_avg = np.zeros(M)
+	    L = 1. / (64 * M)
+	    outer_loops = 40
+
+	    alpha_avg
+	    for ii in xrange(outer_loops * M):
+	        i = int(np.random.rand() * M)
+	        margin = Y[i] * np.dot(K[i, :], alpha)
+	        grad = M * L * K[:, i] * alpha[i]
+	        if (margin < 1):
+	            grad -=  Y[i] * K[:, i]
+	        alpha -=  grad / np.sqrt(ii + 1)
+	        alpha_avg += alpha
+
+	    alpha_avg /= (ii + 1) * M
+
+	    state['alpha'] = alpha
+	    state['alpha_avg'] = alpha_avg
+	    state['Xtrain'] = matrix
+	    state['Sqtrain'] = squared
+	    ####################
+	    return state
+    def svm_test(matrix, state):
+		M, N = matrix.shape
+		output = np.zeros(M)
+		Xtrain = state['Xtrain']
+		Sqtrain = state['Sqtrain']
+		matrix = 1. * (matrix > 0)
+		squared = np.sum(matrix * matrix, axis=1)
+		gram = matrix.dot(Xtrain.T)
+		K = np.exp(-(squared.reshape((-1, 1)) + Sqtrain.reshape((1, -1)) - 2 * gram) / (2 * (tau ** 2)))
+		alpha_avg = state['alpha_avg']
+		preds = K.dot(alpha_avg)
+		output = np.sign(preds)
+		return output
 

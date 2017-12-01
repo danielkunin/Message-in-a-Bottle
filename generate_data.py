@@ -11,8 +11,8 @@ def binary_paramters():
 
 # plots first two dim dataset (data) and contour lines (pos, cond)
 def complex_paramters():
-    pi = np.array([1/3, 1/3, 1/3])
-    mu = np.array([[0., 0.],[3., 5.],[5,2]])
+    pi = np.array([1./3, 1./3, 1./3])
+    mu = np.array([[0., 0.],[3., 5.],[5., 2.]])
     cov = np.array([[[1.,0.],[0.,1.]],[[3.,2.],[2.,10.]],[[2,0.5],[0.5,2]]])
     return pi, mu, cov
 

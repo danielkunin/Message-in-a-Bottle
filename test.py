@@ -52,14 +52,16 @@ def perceptron_test():
     pi, mu, cov = binary_paramters()
     # sample
     X_trn, Y_trn = sample_gaussian(pi, mu, cov, m)
+    X_tst, Y_tst = sample_gaussian(pi, mu, cov, m)
     X_trn = add_ones(X_trn)
+    X_tst = add_ones(X_tst)
     # perceptron
-    perceptron = PERCEPTRON(X_trn, Y_trn, [], [])
+    perceptron = PERCEPTRON(X_trn, Y_trn, X_tst, Y_tst)
     # train
     n_epoch = 100
-    l_rate = 0.01
+    l_rate = 0.001
     batch = m
-    lmbda = 120
+    lmbda = 0
     perceptron.train(l_rate, n_epoch, batch, lmbda)
     # plot
     perceptron.plot()
@@ -67,10 +69,12 @@ def perceptron_test():
 
 # Logistic Regression
 def logistic_test():
-    # setup parameters
-    m = 300
+    # setup
+    print("=== LOGISTIC REGRESSION ===")
+    m = 100
     pi, mu, cov = binary_paramters()
-    # sample data
+    # sample
+    print(" == sample data == ")
     X_trn, Y_trn = sample_gaussian(pi, mu, cov, m)
     X_tst, Y_tst = sample_gaussian(pi, mu, cov, m)
     # update data
@@ -78,15 +82,17 @@ def logistic_test():
     X_trn = add_ones(X_trn)
     X_tst = square(X_tst)
     X_tst = add_ones(X_tst)
-    # logistic regression
+    # logistic
     logistic = LOGISTIC(X_trn, Y_trn, X_tst, Y_tst)
     # train
-    n_epoch = 100
+    print(" == train == ")
+    n_epoch = 1000
     l_rate = 0.01
     batch = m
     lmbda = 0
     logistic.train(l_rate, n_epoch, batch, lmbda)
     # plot
+    print(" == plot == ")
     logistic.plot()
 
 # Softmax Regression
@@ -101,7 +107,7 @@ def softmax_test():
     # logistic regression
     softmax = SOFTMAX()
     # train
-    n_epoch = 1000
+    n_epoch = 100
     l_rate = 0.0001
     num_class = 3
     I_xx, I_xy, E_train, _ = softmax.train(X_train, Y_train, l_rate, n_epoch, num_class)
@@ -116,9 +122,9 @@ def svm_test():
 # main function of tests to run
 def main():
     # sample()
-    consitency()
+    # consitency()
     # perceptron_test()
-    # logistic_test()
+    logistic_test()
     # softmax_test()
 
 if __name__ == '__main__':

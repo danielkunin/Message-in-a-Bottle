@@ -1,83 +1,53 @@
 import matplotlib.pyplot as plt
+
+
 # plot to information plane
 def info_plane(self):
     fig, ax = plt.subplots()
-    fig.suptitle(self.name + " in the Information Plane", fontsize="x-large")
-    # information & epoch
-    plt.subplot(2, 2, 1)
     plt.scatter(self.I_xx[0,:], self.I_xy[0,:], c=self.Epoch, s=20, cmap='viridis')
     cbar = plt.colorbar()
     cbar.ax.set_ylabel('Epoch', rotation=270)
     ax.grid(True)
-    plt.xlabel('I(X;X~)')
-    plt.ylabel('I(X~;Y)')
-    # information & training error
-    plt.subplot(2, 2, 2)
-    plt.scatter(self.I_xx[0,:], self.I_xy[0,:], c=self.Err[0,:], s=20, cmap='viridis')
-    cbar = plt.colorbar()
-    cbar.ax.set_ylabel('Training Error', rotation=270)
+    plt.title(self.name + " in the Information Plane", fontsize="x-large")
+    plt.xlabel('I(X;T)')
+    plt.ylabel('I(T;Y)')
+    plt.show()
+
+# plot to error curve
+def info_curve(self):
+    fig, ax = plt.subplots()
+    plt.plot(self.Epoch, self.I_xx[0,:], color="#3CBEA3", label="I(X;T)")
+    plt.plot(self.Epoch, self.I_xy[0,:], color="#1189D5", label="I(T;Y)")
+    plt.legend()
     ax.grid(True)
-    plt.xlabel('I(X;X~)')
-    plt.ylabel('I(X~;Y)')
-    # information & epoch
-    plt.subplot(2, 2, 3)
-    plt.scatter(self.I_xx[1,:], self.I_xy[1,:], c=self.Epoch, s=20, cmap='viridis')
+    plt.title(self.name + " in the Error Curve", fontsize="x-large")
+    plt.xlabel('Epoch')
+    plt.ylabel('Information')
+    plt.show()
+
+# plot to error plane
+def error_plane(self):
+    fig, ax = plt.subplots()
+    plt.scatter(self.Err[0,:], self.Err[1,:], c=self.Epoch, s=20, cmap='viridis')
     cbar = plt.colorbar()
     cbar.ax.set_ylabel('Epoch', rotation=270)
     ax.grid(True)
-    plt.xlabel('I(X;X~)')
-    plt.ylabel('I(X~;Y)')
-    # information & training error
-    plt.subplot(2, 2, 4)
-    plt.scatter(self.I_xx[1,:], self.I_xy[1,:], c=self.Err[0,:], s=20, cmap='viridis')
-    cbar = plt.colorbar()
-    cbar.ax.set_ylabel('Training Error', rotation=270)
-    ax.grid(True)
-    plt.xlabel('I(X;X~)')
-    plt.ylabel('I(X~;Y)')
-    # show plots
+    plt.title(self.name + " in the Error Plane", fontsize="x-large")
+    plt.xlabel('Log Training Error')
+    plt.ylabel('Log Test Error')
     plt.show()
 
-
-# plot to error plane
-def accuracy_plane(self):
+# plot to error curve
+def error_curve(self):
     fig, ax = plt.subplots()
-    fig.suptitle(self.name + " in the Accuracy Plane", fontsize="x-large")
-    # information & epoch
-    plt.subplot(2, 2, 1)
-    plt.scatter(self.I_xx[0,:], self.I_xy[0,:], c=self.Err[0,:], s=20, cmap='viridis')
-    cbar = plt.colorbar()
-    cbar.ax.set_ylabel('Training Error', rotation=270)
+    plt.plot(self.Epoch,self.Err[0,:], color="#3CBEA3", label="Training Error")
+    plt.plot(self.Epoch,self.Err[1,:], color="#1189D5", label="Test Error")
+    plt.legend()
     ax.grid(True)
-    plt.xlabel('I(X;X~)')
-    plt.ylabel('I(X~;Y)')
-    # information & training error
-    plt.subplot(2, 2, 2)
-    plt.scatter(self.I_xx[0,:], self.I_xy[0,:], c=self.Err[1,:], s=20, cmap='viridis')
-    cbar = plt.colorbar()
-    cbar.ax.set_ylabel('Test Error', rotation=270)
-    ax.grid(True)
-    plt.xlabel('I(X;X~)')
-    plt.ylabel('I(X~;Y)')
-    # information & epoch
-    plt.subplot(2, 2, 3)
-    plt.scatter(1 - self.Err[1,:], 1 - self.Err[0,:], c=self.I_xx[0,:], s=20, cmap='viridis')
-    cbar = plt.colorbar()
-    cbar.ax.set_ylabel('I(X;X~)', rotation=270)
-    ax.grid(True)
-    plt.xlabel('Test Error')
-    plt.ylabel('Training Error')
-    # information & training error
-    plt.subplot(2, 2, 4)
-    plt.scatter(1 - self.Err[1,:], 1 - self.Err[0,:], c=self.I_xy[0,:], s=20, cmap='viridis')
-    cbar = plt.colorbar()
-    cbar.ax.set_ylabel('I(X~;Y)', rotation=270)
-    ax.grid(True)
-    plt.xlabel('Test Error')
-    plt.ylabel('Training Error')
-    # show plots
+    plt.title(self.name + " in the Error Curve", fontsize="x-large")
+    plt.xlabel('Epoch')
+    plt.ylabel('Log Error')
     plt.show()
-
 
 # plots first two dim dataset (data) and contour lines (pos, cond)
 def plot_2d(x, y, pos, cond):
@@ -96,7 +66,7 @@ def plot_2d(x, y, pos, cond):
 # plot average of line plot with standard deviation
 def plot_area(x, y, mean, std, title):
 	fig, ax = plt.subplots()
-	plt.fill_between(x, mean - std, mean + std, color="#3CBEA3")#1189D5")  
+	plt.fill_between(x, mean - std, mean + std, color="#3CBEA3") 
 	plt.plot(x, mean, color="white", lw=2)  
 	plt.plot(x, y, '--', color="black", lw=1)  
 	ax.grid(True)
