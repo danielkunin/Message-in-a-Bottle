@@ -2,49 +2,49 @@ import matplotlib.pyplot as plt
 
 
 # plot to information plane
-def info_plane(self):
+def info_plane(x, y, c, name):
     fig, ax = plt.subplots()
-    plt.scatter(self.I_xx[0,:], self.I_xy[0,:], c=self.Epoch, s=20, cmap='viridis')
+    plt.scatter(x, y, c=c, s=20, cmap='viridis')
     cbar = plt.colorbar()
     cbar.ax.set_ylabel('Epoch', rotation=270)
     ax.grid(True)
-    plt.title(self.name + " in the Information Plane", fontsize="x-large")
+    plt.title(name + " in the Information Plane", fontsize="x-large")
     plt.xlabel('I(X;T)')
     plt.ylabel('I(T;Y)')
     plt.show()
 
 # plot to error curve
-def info_curve(self):
+def info_curve(x, y1, y2, name):
     fig, ax = plt.subplots()
-    plt.plot(self.Epoch, self.I_xx[0,:], color="#3CBEA3", label="I(X;T)")
-    plt.plot(self.Epoch, self.I_xy[0,:], color="#1189D5", label="I(T;Y)")
+    plt.plot(x, y1, color="#3CBEA3", label="I(X;T)")
+    plt.plot(x, y2, color="#1189D5", label="I(T;Y)")
     plt.legend()
     ax.grid(True)
-    plt.title(self.name + " in the Error Curve", fontsize="x-large")
+    plt.title(name + " in the Information Curve", fontsize="x-large")
     plt.xlabel('Epoch')
     plt.ylabel('Information')
     plt.show()
 
 # plot to error plane
-def error_plane(self):
+def error_plane(x, y, c, name):
     fig, ax = plt.subplots()
-    plt.scatter(self.Err[0,:], self.Err[1,:], c=self.Epoch, s=20, cmap='viridis')
+    plt.scatter(x, y, c=c, s=20, cmap='viridis')
     cbar = plt.colorbar()
     cbar.ax.set_ylabel('Epoch', rotation=270)
     ax.grid(True)
-    plt.title(self.name + " in the Error Plane", fontsize="x-large")
+    plt.title(name + " in the Error Plane", fontsize="x-large")
     plt.xlabel('Log Training Error')
     plt.ylabel('Log Test Error')
     plt.show()
 
 # plot to error curve
-def error_curve(self):
+def error_curve(x, y1, y2, name):
     fig, ax = plt.subplots()
-    plt.plot(self.Epoch,self.Err[0,:], color="#3CBEA3", label="Training Error")
-    plt.plot(self.Epoch,self.Err[1,:], color="#1189D5", label="Test Error")
+    plt.plot(x, y1, color="#3CBEA3", label="Training Error")
+    plt.plot(x, y2, color="#1189D5", label="Test Error")
     plt.legend()
     ax.grid(True)
-    plt.title(self.name + " in the Error Curve", fontsize="x-large")
+    plt.title(name + " in the Error Curve", fontsize="x-large")
     plt.xlabel('Epoch')
     plt.ylabel('Log Error')
     plt.show()

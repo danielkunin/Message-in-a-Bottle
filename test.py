@@ -86,7 +86,7 @@ def logistic_test():
     logistic = LOGISTIC(X_trn, Y_trn, X_tst, Y_tst)
     # train
     print(" == train == ")
-    n_epoch = 1000
+    n_epoch = 100
     l_rate = 0.01
     batch = m
     lmbda = 0
@@ -98,34 +98,60 @@ def logistic_test():
 # Softmax Regression
 def softmax_test():
     # setup
-    n = 300
+    m = 300
     pi, mu, cov = complex_paramters()
     # sample
-    X_train, Y_train = sample_gaussian(pi, mu, cov, m)
-    X_train = square(X_train)
-    X_train = add_ones(X_train)
+    X_trn, Y_trn = sample_gaussian(pi, mu, cov, m)
+    X_tst, Y_tst = sample_gaussian(pi, mu, cov, m)
+    # update data
+    X_trn = square(X_trn)
+    X_trn = add_ones(X_trn)
+    X_tst = square(X_tst)
+    X_tst = add_ones(X_tst)
     # logistic regression
-    softmax = SOFTMAX()
+    softmax = SOFTMAX(X_trn, Y_trn, X_tst, Y_tst)
     # train
-    n_epoch = 100
-    l_rate = 0.0001
-    num_class = 3
-    I_xx, I_xy, E_train, _ = softmax.train(X_train, Y_train, l_rate, n_epoch, num_class)
+    n_epoch = 1000
+    l_rate = 0.01
+    batch = m
+    lmbda = 0
+    softmax.train(l_rate, n_epoch, batch, lmbda)
     # plot
-    softmax.plot(I_xx, I_xy, E_train, np.arange(1, n_epoch + 1))
+    softmax.plot()
 
 
 # Support Vector Machines
 def svm_test():
-	pass
+	# setup
+    m = 800
+    pi, mu, cov = binary_paramters()
+    # sample
+    X_trn, Y_trn = sample_gaussian(pi, mu, cov, m)
+    X_tst, Y_tst = sample_gaussian(pi, mu, cov, m)
+    # update data
+    X_trn = square(X_trn)
+    # X_trn = add_ones(X_trn)
+    # X_tst = square(X_tst)
+    # X_tst = add_ones(X_tst)
+    # logistic regression
+    svm = SVM(X_trn, Y_trn, X_tst, Y_tst)
+    # train
+    n_epoch = 150
+    l_rate = 0.01
+    batch = m
+    lmbda = 0
+    svm.train(l_rate, n_epoch, batch, lmbda)
+    # plot
+    # svm.plot()
 
 # main function of tests to run
 def main():
     # sample()
     # consitency()
     # perceptron_test()
-    logistic_test()
+    # logistic_test()
     # softmax_test()
+    svm_test()
 
 if __name__ == '__main__':
     main()
