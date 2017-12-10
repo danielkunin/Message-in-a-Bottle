@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 from generate_data import *
 from info_measures import *
 from ml_algorithms import *
-from nn_starter import *
 from plots import *
 
 # generates mixture of gaussian dataset and plots results with contours
@@ -10,8 +9,8 @@ def sample():
     print("=== SAMPLE AND PLOT ===")
     # setup
     n = 300
-    # pi, mu, cov = binary_paramters()
-    pi, mu, cov = complex_paramters()
+    pi, mu, cov = binary_paramters()
+    # pi, mu, cov = complex_paramters()
     # sample & mesh
     X, Y = sample_gaussian(pi, mu, cov, n)
     pos, cond = mesh_gaussian(mu, cov, [-2,-2], [12,12], 1000)
@@ -35,16 +34,16 @@ def consitency():
         X_y1 = X[Y == 1]
         # calculate mutual information
         for j in size:
-            kde[i, int((j - step) / step)] = KDE_CD(X[0:j], Y[0:j])
+            # kde[i, int((j - step) / step)] = KDE_CD(X[0:j], Y[0:j])
             # kde[i, int((j - step) / step)] = KDE_CC(X_y0[0:j,:], X_y1[0:j,:])
-            # kde[i, int((j - step) / step)] = I_BIN(X[0:j], Y[0:j])
+            kde[i, int((j - step) / step)] = I_BIN(X[0:j], Y[0:j])
     mean = np.mean(kde, axis=0)
     std = np.std(kde, axis=0)
     mi = I_TRUTH(pi, mu, cov, 10^8)
     truth = [mi for i in size]
     # plot estimates
     # plot_line(np.tile(size,(m, 1)), kde, 'KDE I(X,Y) Estimator')
-    plot_area(size, truth, mean, std, 'KDE with CV Method')
+    plot_area(size, truth, mean, std, 'BIN Method')
 
 # Perceptron
 def perceptron_test():
@@ -55,14 +54,14 @@ def perceptron_test():
     # sample
     print(" == sample data == ")
     X_trn, Y_trn = sample_gaussian(pi, mu, cov, m)
-    X_tst, Y_tst = sample_gaussian(pi, mu, cov, m)
+    X_tst, Y_tst = sample_gaussian(pi, mu, cov, m / 2)
     X_trn = add_ones(X_trn)
     X_tst = add_ones(X_tst)
     # perceptron
     perceptron = PERCEPTRON(X_trn, Y_trn, X_tst, Y_tst)
     # train
     print(" == train == ")
-    n_epoch = 100
+    n_epoch = 1000
     l_rate = 0.001
     batch = m
     lmbda = 0
@@ -76,22 +75,22 @@ def perceptron_test():
 def logistic_test():
     # setup
     print("=== LOGISTIC REGRESSION ===")
-    m = 100
+    m = 300
     pi, mu, cov = binary_paramters()
     # sample
     print(" == sample data == ")
     X_trn, Y_trn = sample_gaussian(pi, mu, cov, m)
-    X_tst, Y_tst = sample_gaussian(pi, mu, cov, m)
+    X_tst, Y_tst = sample_gaussian(pi, mu, cov, m / 2)
     # update data
-    X_trn = square(X_trn)
+    # X_trn = square(X_trn)
     X_trn = add_ones(X_trn)
-    X_tst = square(X_tst)
+    # X_tst = square(X_tst)
     X_tst = add_ones(X_tst)
     # logistic
     logistic = LOGISTIC(X_trn, Y_trn, X_tst, Y_tst)
     # train
     print(" == train == ")
-    n_epoch = 100
+    n_epoch = 1000
     l_rate = 0.01
     batch = m
     lmbda = 0
@@ -109,7 +108,7 @@ def softmax_test():
     # sample
     print(" == sample data == ")
     X_trn, Y_trn = sample_gaussian(pi, mu, cov, m)
-    X_tst, Y_tst = sample_gaussian(pi, mu, cov, m)
+    X_tst, Y_tst = sample_gaussian(pi, mu, cov, m / 2)
     # update data
     X_trn = square(X_trn)
     X_trn = add_ones(X_trn)
@@ -133,7 +132,7 @@ def softmax_test():
 def svm_test():
 	# setup
     print("=== SUPPORT VECTOR MACHINE ===")
-    m = 800
+    m = 300
     pi, mu, cov = binary_paramters()
     # sample
     print(" == sample data == ")
@@ -146,17 +145,14 @@ def svm_test():
     svm = SVM(X_trn, Y_trn, X_tst, Y_tst)
     # train
     print(" == train == ")
-    n_epoch = 100
+    n_epoch = 1000
     l_rate = 0.01
     batch = m
     lmbda = 0
     svm.train(l_rate, n_epoch, batch, lmbda)
     # plot
     print(" == plot == ")
-    Ixy = 0.6#I_TRUTH(pi, mu, cov, m)
-    #H = np.vectorize(entropy)
-    Hy = 1.0#np.sum(H(pi))
-    svm.plot(Ixy, Hy)
+    svm.plot()
 
 
 
@@ -164,10 +160,10 @@ def svm_test():
 def main():
     # sample()
     # consitency()
-    # perceptron_test()
+    perceptron_test()
     logistic_test()
     # softmax_test()
-    # svm_test()
+    svm_test()
 
 if __name__ == '__main__':
     main()

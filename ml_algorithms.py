@@ -56,10 +56,14 @@ class PERCEPTRON:
         self.Theta = theta
 
     def plot(self):
-        info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
-        info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
-        error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
-        error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
+        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
+        # info_plane2(self.I_xx[0,:], self.I_xy[0,:], self.Err[0,:], self.name)
+        info_plane(self.I_xx[1,:], self.I_xy[1,:], self.Epoch, self.name)
+        info_plane2(self.I_xx[1,:], self.I_xy[1,:], self.Err[0,:], self.name)
+        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
+        # info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
+        # error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
+        # error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
 
 # Logistic Regression
 class LOGISTIC:
@@ -115,8 +119,10 @@ class LOGISTIC:
 
 
     def plot(self):
-        info_plane(self.I_xx[0,:], self.I_xy[0,:], 1. - self.Err[0,:], self.name)
-        info_plane(self.I_xx[0,:], self.I_xy[0,:], 1. - self.Err[1,:], self.name)
+        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
+        # info_plane2(self.I_xx[0,:], self.I_xy[0,:], self.Err[0,:], self.name)
+        info_plane(self.I_xx[1,:], self.I_xy[1,:], self.Epoch, self.name)
+        info_plane2(self.I_xx[1,:], self.I_xy[1,:], self.Err[0,:], self.name)
         # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
         # info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
         # error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
@@ -255,33 +261,26 @@ class SVM:
 
         # Check SVM training accuracy against SKLEARN
         print("Final Training Accuracy: %f" % (np.sum(p_trn == Y_trn) / (1. * M)))
-        print("Final Test Accuracy: %f" % (np.sum(p_tst == Y_tst) / (1. * M)))
         clf = SVC()
         clf.fit(X_trn, Y_trn)
         print("SKLEARN Training Accuracy: %f" % clf.score(X_trn,Y_trn))
 
-
-        # def predict(X_tst):
-        #     sqr_tst = np.sum(X_tst * X_tst, axis=1)
-        #     gram_tst = X_tst.dot(X_trn.T)
-        #     K_tst = np.exp(-(sqr_tst.reshape((1, -1)) + sqr_trn.reshape((-1, 1)) - 2 * gram_tst) / (2 * (tau ** 2)))
-        #     preds = K_trn.dot(alpha_avg)
-        #     return np.sign(preds)
-
-
-        # plot_decision_boundary(X_tst, predict)
 
         self.I_xx = I_xx
         self.I_xy = I_xy
         self.Err = Err
         self.Epoch = np.arange(1, n_epoch + 1)
 
-    def plot(self, Ixy, Hy):
-        info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
+    def plot(self):
+        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
+        # info_plane2(self.I_xx[0,:], self.I_xy[0,:], self.Err[0,:], self.name)
         info_plane(self.I_xx[1,:], self.I_xy[1,:], self.Epoch, self.name)
-        info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
-        info_curve(self.Epoch, self.I_xx[1,:], self.I_xy[1,:], self.name)
-        error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
-        error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
-        ratio_curve(self.Epoch, self.I_xx[0,:] / Ixy, self.Err[0,:], self.name)
-        ratio_curve(self.Epoch, self.I_xy[0,:] / Hy, self.Err[0,:], self.name)
+        info_plane2(self.I_xx[1,:], self.I_xy[1,:], self.Err[0,:], self.name)
+        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
+        # info_plane(self.I_xx[1,:], self.I_xy[1,:], self.Epoch, self.name)
+        # info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
+        # info_curve(self.Epoch, self.I_xx[1,:], self.I_xy[1,:], self.name)
+        # error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
+        # error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
+        # ratio_curve(self.Epoch, self.I_xx[0,:] / Ixy, self.Err[0,:], self.name)
+        # ratio_curve(self.Epoch, self.I_xy[0,:] / Hy, self.Err[0,:], self.name)

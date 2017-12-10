@@ -4,7 +4,7 @@ from scipy.stats import multivariate_normal as mvn
 
 # plots first two dim dataset (data) and contour lines (pos, cond)
 def binary_paramters():
-    pi = np.array([0.5, 0.5])
+    pi = np.array([0.4, 0.6])
     mu = np.array([[0., 0.],[3., 5.]])
     cov = np.array([[[1.,0.],[0.,1.]],[[3.,2.],[2.,10.]]])
     return pi, mu, cov

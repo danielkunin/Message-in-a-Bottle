@@ -9,10 +9,27 @@ def info_plane(x, y, c, name):
     cbar = plt.colorbar()
     cbar.ax.set_ylabel('Epoch', rotation=270)
     ax.grid(True)
-    plt.title(name + " in the Information Plane", fontsize="x-large")
+    # ax.set_ylim([1,2.1])
+    # ax.set_xlim([0,1.2])
+    plt.title(name, fontsize="x-large")
     plt.xlabel('I(X;T)')
     plt.ylabel('I(T;Y)')
     plt.show()
+
+# plot to information plane
+def info_plane2(x, y, c, name):
+    fig, ax = plt.subplots()
+    plt.scatter(x, y, c=c, s=20, cmap='plasma')
+    cbar = plt.colorbar()
+    cbar.ax.set_ylabel('Training Error', rotation=270)
+    ax.grid(True)
+    # ax.set_ylim([1,2.1])
+    # ax.set_xlim([0,1.2])
+    plt.title(name, fontsize="x-large")
+    plt.xlabel('I(X;T)')
+    plt.ylabel('I(T;Y)')
+    plt.show()
+
 
 # plot to error curve
 def info_curve(x, y1, y2, name):
@@ -63,28 +80,13 @@ def ratio_curve(x, y1, y2, name):
     plt.show()
 
 
-def plot_decision_boundary(X, pred_func): 
-	# from DENNY BRITZ
-    # Set min and max values and give it some padding 
-    x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5 
-    y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5 
-    h = 0.01 
-    # Generate a grid of points with distance h between them 
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h)) 
-    # Predict the function value for the whole gid 
-    Z = pred_func(np.c_[xx.ravel(), yy.ravel()]) 
-    Z = Z.reshape(xx.shape) 
-    # Plot the contour and training examples 
-    plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral) 
-    plt.scatter(X[:, 0], X[:, 1], s=10, c=y, cmap=plt.cm.Spectral) 
-
-
 # plots first two dim dataset (data) and contour lines (pos, cond)
 def plot_2d(x, y, pos, cond):
 	fig, ax = plt.subplots()
+	plt.scatter(x[y==0,0],x[y==0,1], c="#3CBEA3", s=10, label="0")
+	plt.scatter(x[y==1,0],x[y==1,1], c="#009CDD", s=10, label="1")
 	for p in cond:
-		plt.contour(pos[:,:,0], pos[:,:,1], p)
-	plt.scatter(x[:,0],x[:,1], c=y)
+		plt.contour(pos[:,:,0], pos[:,:,1], p, cmap=plt.get_cmap('OrRd'))
 	plt.axis('scaled')
 	ax.grid(True)
 	plt.legend(y)
@@ -96,7 +98,7 @@ def plot_2d(x, y, pos, cond):
 # plot average of line plot with standard deviation
 def plot_area(x, y, mean, std, title):
 	fig, ax = plt.subplots()
-	plt.fill_between(x, mean - std, mean + std, color="#3CBEA3") 
+	plt.fill_between(x, mean - std, mean + std, color="#46C7B2") 
 	plt.plot(x, mean, color="white", lw=2)  
 	plt.plot(x, y, '--', color="black", lw=1)  
 	ax.grid(True)
