@@ -2,7 +2,7 @@ import numpy as np
 from scipy import stats
 from scipy.stats import multivariate_normal as mvn
 from sklearn.neighbors import KernelDensity
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 
 
 # Computes mutual infromation I(X;Y) of multivariate gaussians
@@ -137,22 +137,18 @@ def KDE_CD(X, Y):
 
 # Kernel Density Estimator Method for two Continuous Random Variables
 def KDE_CC(X, Y):
-	try:
-		# entropy of HXY
-		XY = np.concatenate((X, Y), axis=1)
-		Hxy = KDE_ENTROPY(XY, 0)
-		# entropy of X
-		Hx = KDE_ENTROPY(X, 0)
-		# entropy of Y
-		Hy = KDE_ENTROPY(Y, 0)
-		# mutual information
-		I = Hx + Hy - Hxy
-		# normalize and convert to bits
-		I /= (X.shape[0] * np.log(2))
-		return I
-	except np.linalg.linalg.LinAlgError as err:
-		return 0
-
-
-
-# Variational Bound Method (VAR)
+	# try:
+	# entropy of HXY
+	XY = np.concatenate((X, Y), axis=1)
+	Hxy = KDE_ENTROPY(XY, 0)
+	# entropy of X
+	Hx = KDE_ENTROPY(X, 0)
+	# entropy of Y
+	Hy = KDE_ENTROPY(Y, 0)
+	# mutual information
+	I = Hx + Hy - Hxy
+	# normalize and convert to bits
+	I /= (X.shape[0] * np.log(2))
+	return I
+	# except np.linalg.linalg.LinAlgError as err:
+		# return 0

@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 # plot to information plane
@@ -28,7 +29,7 @@ def info_curve(x, y1, y2, name):
 # plot to error plane
 def error_plane(x, y, c, name):
     fig, ax = plt.subplots()
-    plt.scatter(x, y, c=c, s=20, cmap='viridis')
+    plt.scatter(x, np.log(y), c=c, s=20, cmap='viridis')
     cbar = plt.colorbar()
     cbar.ax.set_ylabel('Epoch', rotation=270)
     ax.grid(True)
@@ -40,13 +41,25 @@ def error_plane(x, y, c, name):
 # plot to error curve
 def error_curve(x, y1, y2, name):
     fig, ax = plt.subplots()
-    plt.plot(x, y1, color="#3CBEA3", label="Training Error")
-    plt.plot(x, y2, color="#1189D5", label="Test Error")
+    plt.plot(x, np.log(y1), color="#3CBEA3", label="Training Error")
+    plt.plot(x, np.log(y2), color="#1189D5", label="Test Error")
     plt.legend()
     ax.grid(True)
     plt.title(name + " in the Error Curve", fontsize="x-large")
     plt.xlabel('Epoch')
     plt.ylabel('Log Error')
+    plt.show()
+
+# plots ratio of mutual information against error
+def ratio_curve(x, y1, y2, name):
+    fig, ax = plt.subplots()
+    plt.plot(x, y1, color="#3CBEA3", label="Ratio")
+    plt.plot(x, y2, color="#1189D5", label="Error")
+    plt.legend()
+    ax.grid(True)
+    plt.title(name + " Mutual Information Convergence", fontsize="x-large")
+    plt.xlabel('Epoch')
+    plt.ylabel('Information')
     plt.show()
 
 # plots first two dim dataset (data) and contour lines (pos, cond)
