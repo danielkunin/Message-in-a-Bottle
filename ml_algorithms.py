@@ -115,10 +115,12 @@ class LOGISTIC:
 
 
     def plot(self):
-        info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
-        info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
-        error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
-        error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
+        info_plane(self.I_xx[0,:], self.I_xy[0,:], 1. - self.Err[0,:], self.name)
+        info_plane(self.I_xx[0,:], self.I_xy[0,:], 1. - self.Err[1,:], self.name)
+        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
+        # info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
+        # error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
+        # error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
 
 # Softmax Regression
 class SOFTMAX:
@@ -199,10 +201,6 @@ class SVM:
         self.Y_tst = Y_tst
         self.name = "Support Vector Machine"
 
-    def rbf(self, sqr, gram, tau):
-        return np.exp(-(sqr.reshape((1, -1)) + sqr.reshape((-1, 1)) - 2 * gram) / (2 * (tau ** 2)))
-
-    #def train(self, l_rate, n_epoch, batch, lmbda):
     def train(self, l_rate, n_epoch, batch, lmbda):
         # Setup Arrays
         I_xx = np.zeros((2, n_epoch))
@@ -218,13 +216,13 @@ class SVM:
         M, N = X_trn.shape
         tau = 8.
         # Create Training Kernel
-        sqr = np.sum(X_trn * X_trn, axis=1)
-        gram = X_trn.dot(X_trn.T)
-        K_trn = self.rbf(sqr, gram, tau)
+        sqr_trn = np.sum(X_trn * X_trn, axis=1)
+        gram_trn = X_trn.dot(X_trn.T)
+        K_trn = np.exp(-(sqr_trn.reshape((1, -1)) + sqr_trn.reshape((-1, 1)) - 2 * gram_trn) / (2 * (tau ** 2)))
         # Create Test Kernel
-        sqr = np.sum(X_tst * X_tst, axis=1)
-        gram = X_tst.dot(X_trn.T)
-        K_tst = self.rbf(sqr, gram, tau)
+        sqr_tst = np.sum(X_tst * X_tst, axis=1)
+        gram_tst = X_tst.dot(X_trn.T)
+        K_tst = np.exp(-(sqr_tst.reshape((1, -1)) + sqr_trn.reshape((-1, 1)) - 2 * gram_tst) / (2 * (tau ** 2)))
         # Setup Coeficient Parameters
         alpha = np.zeros(M)
         alpha_avg = np.zeros(M)
@@ -257,9 +255,21 @@ class SVM:
 
         # Check SVM training accuracy against SKLEARN
         print("Final Training Accuracy: %f" % (np.sum(p_trn == Y_trn) / (1. * M)))
+        print("Final Test Accuracy: %f" % (np.sum(p_tst == Y_tst) / (1. * M)))
         clf = SVC()
         clf.fit(X_trn, Y_trn)
         print("SKLEARN Training Accuracy: %f" % clf.score(X_trn,Y_trn))
+
+
+        # def predict(X_tst):
+        #     sqr_tst = np.sum(X_tst * X_tst, axis=1)
+        #     gram_tst = X_tst.dot(X_trn.T)
+        #     K_tst = np.exp(-(sqr_tst.reshape((1, -1)) + sqr_trn.reshape((-1, 1)) - 2 * gram_tst) / (2 * (tau ** 2)))
+        #     preds = K_trn.dot(alpha_avg)
+        #     return np.sign(preds)
+
+
+        # plot_decision_boundary(X_tst, predict)
 
         self.I_xx = I_xx
         self.I_xy = I_xy
@@ -273,16 +283,5 @@ class SVM:
         info_curve(self.Epoch, self.I_xx[1,:], self.I_xy[1,:], self.name)
         error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
         error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
-        # ratio_curve(self.Epoch, self.I_xx[0,:] / Ixy, self.Err[0,:], self.name)
-        # ratio_curve(self.Epoch, self.I_xy[0,:] / Hy, self.Err[0,:], self.name)
-
-
-# Neural Network (one hidden layer)
-class NN:
-
-    def __init__(self, X_trn, Y_trn, X_tst, Y_tst):
-        self.X_trn = X_trn
-        self.Y_trn = Y_trn
-        self.X_tst = X_tst
-        self.Y_tst = Y_tst
-        self.name = "Neural Network"
+        ratio_curve(self.Epoch, self.I_xx[0,:] / Ixy, self.Err[0,:], self.name)
+        ratio_curve(self.Epoch, self.I_xy[0,:] / Hy, self.Err[0,:], self.name)

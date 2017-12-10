@@ -140,8 +140,8 @@ def svm_test():
     X_trn, Y_trn = sample_gaussian(pi, mu, cov, m)
     X_tst, Y_tst = sample_gaussian(pi, mu, cov, m)
     # update data
-    X_trn = square(X_trn)
-    X_tst = square(X_tst)
+    # X_trn = square(X_trn)
+    # X_tst = square(X_tst)
     # logistic regression
     svm = SVM(X_trn, Y_trn, X_tst, Y_tst)
     # train
@@ -159,56 +159,15 @@ def svm_test():
     svm.plot(Ixy, Hy)
 
 
-# Neural Networks on MNIST
-def nn_test():
-    print("=== NEURAL NETWORK ===")
-    np.random.seed(100)
-    print(" == load training data == ")
-    trainData, trainLabels = readData('MNIST/images_train.csv', 'MNIST/labels_train.csv')
-    trainLabels = one_hot_labels(trainLabels)
-    p = np.random.permutation(60000)
-    trainData = trainData[p,:]
-    trainLabels = trainLabels[p,:]
-
-    devData = trainData[0:10000,:]
-    devLabels = trainLabels[0:10000,:]
-    trainData = trainData[10000:,:]
-    trainLabels = trainLabels[10000:,:]
-
-    mean = np.mean(trainData)
-    std = np.std(trainData)
-    trainData = (trainData - mean) / std
-    devData = (devData - mean) / std
-
-    print(" == load test data == ")
-    testData, testLabels = readData('MNIST/images_test.csv', 'MNIST/labels_test.csv')
-    testLabels = one_hot_labels(testLabels)
-    testData = (testData - mean) / std
-    
-    print(" == train == ")
-    params = nn_train(trainData, trainLabels, devData, devLabels)
-
-    print(" == test == ")
-    readyForTesting = True
-    if readyForTesting:
-        accuracy = test(testData, testLabels, params)
-    print 'Test accuracy: %f' % accuracy
-
-
-# Information and Error  
-def info_error():
-    pass
-
 
 # main function of tests to run
 def main():
     # sample()
     # consitency()
     # perceptron_test()
-    # logistic_test()
+    logistic_test()
     # softmax_test()
     # svm_test()
-    # nn_test()
 
 if __name__ == '__main__':
     main()
