@@ -18,3 +18,7 @@ Our code is split into three folders each with their own associated README:
 + moon base - this code base is built on https://github.com/ravidziv/IDNNs and the moon dataset from Scikit learn to achieve our third goal (bias/variance and generalization/compression)
 + dynamic batch - this code base is built on https://github.com/ravidziv/IDNNs to achieve our fourth goal (dynamic batch learning algorithm)
 
+Additionally we added our report and two pdfs with additional material:
++ Message in a Bottle - our final report
++ mutual information - our literature search of mutual information estimators
++ information and error - an analytic exploration of the relationship between mutual information and error 
