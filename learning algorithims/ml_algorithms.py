@@ -3,7 +3,8 @@ from info_measures import *
 from plots import *
 from sklearn.svm import SVC
 
-# Perceptron
+# Perceptron (adapted from CS229 notes and the following online resource:
+# https://machinelearningmastery.com/implement-perceptron-algorithm-scratch-python/)
 class PERCEPTRON:
 
     def __init__(self, X_trn, Y_trn, X_tst, Y_tst):
@@ -56,16 +57,12 @@ class PERCEPTRON:
         self.Theta = theta
 
     def plot(self):
-        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
-        # info_plane2(self.I_xx[0,:], self.I_xy[0,:], self.Err[0,:], self.name)
-        info_plane(self.I_xx[1,:], self.I_xy[1,:], self.Epoch, self.name)
-        info_plane2(self.I_xx[1,:], self.I_xy[1,:], self.Err[0,:], self.name)
-        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
-        # info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
-        # error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
-        # error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
+        info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
+        info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
+        error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
+        error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
 
-# Logistic Regression
+# Logistic Regression (adapted from CS229 Source Code)
 class LOGISTIC:
 
     def __init__(self, X_trn, Y_trn, X_tst, Y_tst):
@@ -119,16 +116,12 @@ class LOGISTIC:
 
 
     def plot(self):
-        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
-        # info_plane2(self.I_xx[0,:], self.I_xy[0,:], self.Err[0,:], self.name)
-        info_plane(self.I_xx[1,:], self.I_xy[1,:], self.Epoch, self.name)
-        info_plane2(self.I_xx[1,:], self.I_xy[1,:], self.Err[0,:], self.name)
-        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
-        # info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
-        # error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
-        # error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
+        info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
+        info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
+        error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
+        error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
 
-# Softmax Regression
+# Softmax Regression (adapted from CS229 Source Code)
 class SOFTMAX:
 
     def __init__(self, X_trn, Y_trn, X_tst, Y_tst):
@@ -197,7 +190,7 @@ class SOFTMAX:
         error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
 
 
-# Support Vector Machine
+# Support Vector Machine (adapted from CS229 Source Code)
 class SVM:
     
     def __init__(self, X_trn, Y_trn, X_tst, Y_tst):
@@ -272,15 +265,7 @@ class SVM:
         self.Epoch = np.arange(1, n_epoch + 1)
 
     def plot(self):
-        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
-        # info_plane2(self.I_xx[0,:], self.I_xy[0,:], self.Err[0,:], self.name)
         info_plane(self.I_xx[1,:], self.I_xy[1,:], self.Epoch, self.name)
-        info_plane2(self.I_xx[1,:], self.I_xy[1,:], self.Err[0,:], self.name)
-        # info_plane(self.I_xx[0,:], self.I_xy[0,:], self.Epoch, self.name)
-        # info_plane(self.I_xx[1,:], self.I_xy[1,:], self.Epoch, self.name)
-        # info_curve(self.Epoch, self.I_xx[0,:], self.I_xy[0,:], self.name)
-        # info_curve(self.Epoch, self.I_xx[1,:], self.I_xy[1,:], self.name)
-        # error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
-        # error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)
-        # ratio_curve(self.Epoch, self.I_xx[0,:] / Ixy, self.Err[0,:], self.name)
-        # ratio_curve(self.Epoch, self.I_xy[0,:] / Hy, self.Err[0,:], self.name)
+        info_curve(self.Epoch, self.I_xx[1,:], self.I_xy[1,:], self.name)
+        error_plane(self.Err[0,:], self.Err[1,:], self.Epoch, self.name)
+        error_curve(self.Epoch, self.Err[0,:], self.Err[1,:], self.name)

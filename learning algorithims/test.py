@@ -110,9 +110,9 @@ def softmax_test():
     X_trn, Y_trn = sample_gaussian(pi, mu, cov, m)
     X_tst, Y_tst = sample_gaussian(pi, mu, cov, m / 2)
     # update data
-    X_trn = square(X_trn)
+    # X_trn = square(X_trn)
     X_trn = add_ones(X_trn)
-    X_tst = square(X_tst)
+    # X_tst = square(X_tst)
     X_tst = add_ones(X_tst)
     # logistic regression
     softmax = SOFTMAX(X_trn, Y_trn, X_tst, Y_tst)
@@ -158,11 +158,11 @@ def svm_test():
 
 # main function of tests to run
 def main():
-    # sample()
-    # consitency()
+    sample()
+    consitency()
     perceptron_test()
     logistic_test()
-    # softmax_test()
+    softmax_test()
     svm_test()
 
 if __name__ == '__main__':

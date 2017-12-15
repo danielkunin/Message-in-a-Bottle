@@ -151,4 +151,5 @@ def KDE_CC(X, Y):
 		I /= (X.shape[0] * np.log(2))
 		return I
 	except np.linalg.linalg.LinAlgError as err:
+		# this try catch is needed to prevent issues with singular data features
 		return 0

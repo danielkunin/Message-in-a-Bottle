@@ -9,22 +9,6 @@ def info_plane(x, y, c, name):
     cbar = plt.colorbar()
     cbar.ax.set_ylabel('Epoch', rotation=270)
     ax.grid(True)
-    # ax.set_ylim([1,2.1])
-    # ax.set_xlim([0,1.2])
-    plt.title(name, fontsize="x-large")
-    plt.xlabel('I(X;T)')
-    plt.ylabel('I(T;Y)')
-    plt.show()
-
-# plot to information plane
-def info_plane2(x, y, c, name):
-    fig, ax = plt.subplots()
-    plt.scatter(x, y, c=c, s=20, cmap='plasma')
-    cbar = plt.colorbar()
-    cbar.ax.set_ylabel('Training Error', rotation=270)
-    ax.grid(True)
-    # ax.set_ylim([1,2.1])
-    # ax.set_xlim([0,1.2])
     plt.title(name, fontsize="x-large")
     plt.xlabel('I(X;T)')
     plt.ylabel('I(T;Y)')
@@ -65,18 +49,6 @@ def error_curve(x, y1, y2, name):
     plt.title(name + " in the Error Curve", fontsize="x-large")
     plt.xlabel('Epoch')
     plt.ylabel('Log Error')
-    plt.show()
-
-# plots ratio of mutual information against error
-def ratio_curve(x, y1, y2, name):
-    fig, ax = plt.subplots()
-    plt.plot(x, y1, color="#3CBEA3", label="Ratio")
-    plt.plot(x, y2, color="#1189D5", label="Error")
-    plt.legend()
-    ax.grid(True)
-    plt.title(name + " Mutual Information Convergence", fontsize="x-large")
-    plt.xlabel('Epoch')
-    plt.ylabel('Information')
     plt.show()
 
 
