@@ -2,13 +2,13 @@ Authors: MSB
 Date: Dec 14th,2017
 
 # Dynamic Batch
-----
+
 This is a readme for our code built off of https://github.com/ravidziv/IDNNs
 note: to upload to github, we had to remove the local copy of MNIST
----
+
 
 Tasks of Interest:
-=====================================
+
 To train a model with 5 layer NN:
 run mainMSB.py
 This file will:
@@ -18,26 +18,27 @@ This file will:
 +save all your network learning data to a file (in pickle) to the bin folder
 +plot up the learning curve and the error plane (log error on each axis)
 +plot up the 4 quadrants of the error plane being mapped to the information plane
-===note: the first file saves automatically, but subsequent files are saved manually to avoid overwhelming our testing phase.
-=================================================================
+
+note: the first file saves automatically, but subsequent files are saved manually to avoid overwhelming our testing phase.
+
 To plot the gradients:
 run plot_gradients2.py
 select the file from IDNNS-moondata\jobs in which you saved the gradients
 note: if the file errors at the import that means that the trained network in mainMSB.py was not requested to save gradients. This setting can be changed in network_parameters.py
-============================================================================
+
 To run a convolutional NN on MNIST with partial implementation of the information plane (incomplete):
 run MSB_CovNET_TF.py
 This plots up the learning curve and easily achieves sub-1% error on MNIST
 The information plane is in progress but has not been completed for submission of the final project by Dec 14th, 2017
-==============================================================================
+
 To run a simple softmax classifier which achieves 92% accuracy on MNIST:
 run MSB_softmaxTF.py
 This file is a development file but gives important intution for the difficulty of MNIST classification (i.e. its not the hardest thing to do reasonbly well on).
-==================================================================================
+
 To learn more about MNIST, we looked at Hu's Moment Invarients:
 run HusMoments.py
 you will find the application of Hu's Moment Invarients (which are measures that are invarient to scale, translation and rotation of the feature in the image). We use this to reduce the dimensionality of MNIST down from 784 to 8. We then study the classifications as a function of their position in this low dimensional space and plot up results projecting this data down to two principle components.
-===============================================================================
+
 
 
 
@@ -121,5 +122,3 @@ Any commercial use or any redistribution of this software requires a license.
 For further details, contact Ravid Shwartz-Ziv (ravidziv@gmail.com).
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-- 
