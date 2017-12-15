@@ -1,6 +1,7 @@
 Authors: MSB
 Date: Dec 14th,2017
 
+# Dynamic Batch
 ----
 This is a readme for our code built off of https://github.com/ravidziv/IDNNs
 note: to upload to github, we had to remove the local copy of MNIST
